@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>546003744959-6rc05md572ts71q3qs9kep0jm0jrrgq7.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.546003744959-6rc05md572ts71q3qs9kep0jm0jrrgq7</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>546003744959-oqtf8fh58tmtcf1cjor3t8reprtvbv5m.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDfoL6Bjds-lOxIRdWMHndtbheW6Heki2U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>546003744959</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>za.co.fidelitech.changeAgent</string>
+	<key>PROJECT_ID</key>
+	<string>wfto-change-agent</string>
+	<key>STORAGE_BUCKET</key>
+	<string>wfto-change-agent.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:546003744959:ios:68f66af32d73f5f43f2e0a</string>
+	<key>DATABASE_URL</key>
+	<string>https://wfto-change-agent.firebaseio.com</string>
+</dict>
+</plist>

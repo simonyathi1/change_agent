@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "546003744959",
+    "firebase_url": "https://wfto-change-agent.firebaseio.com",
+    "project_id": "wfto-change-agent",
+    "storage_bucket": "wfto-change-agent.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546003744959:android:d12f95ac983cba593f2e0a",
+        "android_client_info": {
+          "package_name": "za.co.fidelitech.change_agent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "546003744959-oqtf8fh58tmtcf1cjor3t8reprtvbv5m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.fidelitech.change_agent",
+            "certificate_hash": "752a3d93e8e2ea5b7a2311290f56a4fad7262c33"
+          }
+        },
+        {
+          "client_id": "546003744959-lbkb682qcihobcfti1oqedjqn7mp1f52.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.fidelitech.change_agent",
+            "certificate_hash": "2df8880835ceafc8206dbdaad7d027654e308547"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq2OWNIrO-43TMrIl3OSctdjhQLjeCiKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:change_agent/database/activity_data_presenter.dart';
 import 'package:change_agent/database/i_activity_view.dart';
 import 'package:change_agent/enums/Enums.dart';
@@ -12,6 +11,7 @@ import 'package:change_agent/utils/functions_util.dart';
 import 'package:change_agent/utils/strings_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
 import 'package:change_agent/views/currentChallenge/attemptActivityScreen.dart';
+import 'package:flutter/material.dart';
 
 class ActivitiesScreen extends StatefulWidget {
   final Challenge _challenge;
@@ -147,11 +147,25 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
                                     : StringsResource.viewActivityDetails,
                       )),
                   onPressed: () {
-                    navigateToActivityScreen(
-                        challenge,
-                        _signedInUser,
-                        _activityList[
-                            ActivityValue.values.indexOf(_activityValue)]);
+                    if (_signedInUser.currentActivityStatus == "none") {
+                      WidgetUtil().show2BtnAlertDialog(
+                          context,
+                          "Are you sure",
+                          "Selected Activity cannot be changed, please make sure you are selecting one you will be able to complete",
+                              () => Navigator.pop(context),
+                              () => navigateToActivityScreen(
+                              challenge,
+                              _signedInUser,
+                              _activityList[
+                              ActivityValue.values.indexOf(_activityValue)]));
+                    }
+                    else{
+                      navigateToActivityScreen(
+                          challenge,
+                          _signedInUser,
+                          _activityList[
+                          ActivityValue.values.indexOf(_activityValue)]);
+                    }
                   }),
             ),
           ),
@@ -162,7 +176,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
 
   String getTextAreaViewText() {
     List challengeStatusList =
-    StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
+        StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
     int index = int.parse(challenge.id) - 1;
     return challengeStatusList[index] == "complete"
         ? "Challenge already complete"
@@ -175,7 +189,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
 
   Color getSafeAreaColor() {
     List challengeStatusList =
-    StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
+        StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
     int index = int.parse(challenge.id) - 1;
     return challengeStatusList[index] == "complete"
         ? Colors.green
@@ -183,7 +197,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
             ? Colors.yellow
             : challengeStatusList[index] == "rejected"
                 ? Colors.red
-        : Colors.white;
+                : Colors.white;
   }
 
   modeSelectionChanged(ActivityValue value) {

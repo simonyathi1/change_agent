@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:change_agent/enums/Enums.dart';
 import 'package:change_agent/models/activity.dart';
 import 'package:change_agent/models/challenge.dart';
@@ -8,7 +5,12 @@ import 'package:change_agent/models/submission.dart';
 import 'package:change_agent/models/user.dart';
 import 'package:change_agent/reources/dimens.dart';
 import 'package:change_agent/reources/strings_resource.dart';
+import 'package:change_agent/utils/functions_util.dart';
 import 'package:change_agent/utils/strings_util.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'colors_util.dart';
 
@@ -49,11 +51,11 @@ class WidgetUtil {
         );
   }
 
-  static Widget getChallengeItem(Challenge challenge, String challengeStatus,
-      Function onClick) {
+  static Widget getChallengeItem(
+      Challenge challenge, String challengeStatus, Function onClick) {
 //    Widget speakerImage = WidgetUtil().getSpeakerImage(sermon);
     Widget detailsView =
-    WidgetUtil().challengeTileDetail(challenge, challengeStatus);
+        WidgetUtil().challengeTileDetail(challenge, challengeStatus);
 
     return GestureDetector(
       child: Container(
@@ -136,6 +138,27 @@ class WidgetUtil {
       content: Text(message),
     );
     showDialog(context: context, builder: (_) => alertDialog);
+  }
+
+  void show2BtnAlertDialog(BuildContext context, String title, String message, Function negativeAction, Function positiveAction) {
+    showPlatformDialog(
+      context: context,
+      builder: (_) => PlatformAlertDialog(
+        title: Text('Alert'),
+        content: Text('Some content'),
+        actions: <Widget>[
+          _platformDialogAction("Cancel",negativeAction),
+          _platformDialogAction("OK",positiveAction),
+        ],
+      ),
+    );
+  }
+
+  PlatformDialogAction _platformDialogAction(String btnText, Function action) {
+    return PlatformDialogAction(
+      child: PlatformText(btnText),
+      onPressed: action,
+    );
   }
 
   Widget drawerText() {
@@ -231,10 +254,9 @@ class WidgetUtil {
     );
 
     var activities = Text(
-      StringsUtil
-          .getDelimitedList(challenge.activityIDs.toString())
-          .length
-          .toString() +
+      StringsUtil.getDelimitedList(challenge.activityIDs.toString())
+              .length
+              .toString() +
           " Activities",
       textAlign: TextAlign.left,
       style: TextStyle(color: Colors.white54, fontSize: 12.0),
@@ -251,12 +273,12 @@ class WidgetUtil {
                   Icons.remove_circle,
                   color: Colors.yellow,
                 )
-          : challengeStatus == "rejected"
+              : challengeStatus == "rejected"
                   ? Icon(
                       Icons.cancel,
                       color: Colors.red,
                     )
-          : challengeStatus == "locked"
+                  : challengeStatus == "locked"
                       ? Icon(
                           Icons.lock,
                           color: Colors.grey,
@@ -292,32 +314,32 @@ class WidgetUtil {
     var status = ListTile(
       trailing: submission.submissionStatus == "approved"
           ? Icon(
-        Icons.check_circle,
-        color: Colors.green,
-      )
+              Icons.check_circle,
+              color: Colors.green,
+            )
           : submission.submissionStatus == "pending"
-          ? Icon(
-        Icons.remove_circle,
-        color: Colors.yellow,
-      )
-          : submission.submissionStatus == "rejected"
-          ? Icon(
-        Icons.cancel,
-        color: Colors.red,
-      )
-          : submission.submissionStatus == "locked"
-          ? Icon(
-        Icons.lock,
-        color: Colors.grey,
-      )
-          : Icon(
-        Icons.lock_open,
-        color: Colors.white,
-      ),
+              ? Icon(
+                  Icons.remove_circle,
+                  color: Colors.yellow,
+                )
+              : submission.submissionStatus == "rejected"
+                  ? Icon(
+                      Icons.cancel,
+                      color: Colors.red,
+                    )
+                  : submission.submissionStatus == "locked"
+                      ? Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        )
+                      : Icon(
+                          Icons.lock_open,
+                          color: Colors.white,
+                        ),
     );
     return Padding(
         padding:
-        EdgeInsets.only(left: Dimens.baseMargin, bottom: Dimens.baseMargin),
+            EdgeInsets.only(left: Dimens.baseMargin, bottom: Dimens.baseMargin),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[status, title, submittedMaterial],
@@ -406,6 +428,31 @@ class WidgetUtil {
           colors: [
             ColorsUtil.colorAccent,
             ColorsUtil.primaryColorDark.withOpacity(0.8),
+            ColorsUtil.primaryColorDark,
+          ],
+        ),
+      ),
+//          image: DecorationImage(
+//              image: AssetImage("assets/images/.......png"),
+//              fit: BoxFit.cover)),
+
+      child: child,
+    );
+  }
+
+  Widget getActivityGradientBackgroundContainer(Widget child) {
+    return Container(
+      decoration: BoxDecoration(
+        // Box decoration takes a gradient
+        gradient: LinearGradient(
+          // Where the linear gradient begins and ends
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          // Add one stop for each color. Stops should increase from 0 to 1
+          stops: [0, 0.9, 1.0],
+          colors: [
+            ColorsUtil.colorAccent,
+            ColorsUtil.primaryColorDark,
             ColorsUtil.primaryColorDark,
           ],
         ),
@@ -1029,17 +1076,11 @@ class WidgetUtil {
     );
   }
 
-  static Widget getSubmissionDetailsWidget(Submission submission,
-      BuildContext context) {
+  static Widget getSubmissionDetailsWidget(
+      Submission submission, BuildContext context) {
     return Container(
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
-      height: MediaQuery
-          .of(context)
-          .size
-          .height,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       child: ListView(
         children: <Widget>[
           Container(
@@ -1080,27 +1121,17 @@ class WidgetUtil {
                     height: 6.0,
                   ),
                   Text(
-                    "Period",
+                    "Duration",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 18.0),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        submission.startTime,
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 18.0),
-                      ),
-                      Text(
-                        " - " + submission.finishTime,
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 18.0),
-                      ),
-                    ],
+
+                  Text(
+                    FunctionsUtil.calculateTimeLapseForDisplay(submission),
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.6), fontSize: 18.0),
                   ),
 
                   SizedBox(
@@ -1122,9 +1153,7 @@ class WidgetUtil {
                             color: ColorsUtil.primaryColorDark,
                             shape: RoundedRectangleBorder(
                                 side: BorderSide(
-                                    color: Theme
-                                        .of(context)
-                                        .accentColor),
+                                    color: Theme.of(context).accentColor),
                                 borderRadius: BorderRadius.circular(32)),
                             textColor: ColorsUtil.colorAccent,
                             child: Container(

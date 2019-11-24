@@ -28,7 +28,7 @@ class _WFTOAppState extends State<WFTOApp> {
   @override
   Widget build(BuildContext context) {
     MaterialColor primaryColor =
-        MaterialColor(0xFFcd30f1, ColorsUtil.primaryColorMap);
+        MaterialColor(0xFF8cc63f, ColorsUtil.primaryColorMap);
     return MaterialApp(
       title: StringsResource.appTitle,
       debugShowCheckedModeBanner: false,
@@ -38,7 +38,6 @@ class _WFTOAppState extends State<WFTOApp> {
         fontFamily: 'Quicksand',
         textSelectionColor: primaryColor,
         primaryTextTheme: TextTheme(title: TextStyle(color: Colors.black)),
-//        appBarTheme: AppBarTheme(brightness: Brightness.light),
         highlightColor: primaryColor,
         hintColor: Colors.white70,
         unselectedWidgetColor: Colors.white70,

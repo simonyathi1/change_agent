@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:change_agent/database/i_submission_view.dart';
 import 'package:change_agent/database/submission_data_presenter.dart';
 import 'package:change_agent/models/activity.dart';
@@ -11,6 +9,8 @@ import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
 import 'package:change_agent/utils/validation_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
+import 'package:flutter/material.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 // ignore: must_be_immutable
 class AttemptActivityScreen extends StatefulWidget {
@@ -79,7 +79,7 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
               }),
         ),
         body: WidgetUtil()
-            .getGradientBackgroundContainer(Form(child: getDetailsScreen())),
+            .getActivityGradientBackgroundContainer(Form(child: getDetailsScreen())),
       ),
       // ignore: missing_return
       onWillPop: () {
@@ -169,7 +169,7 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                       color: Colors.white.withOpacity(0.6), fontSize: 18.0),
                 ),
                 user.currentActivityStatus == "none" ||
-                    user.currentActivityStatus == "started" ||
+                        user.currentActivityStatus == "started" ||
                         user.currentActivityStatus == "rejected"
                     ? WidgetUtil().getTextFieldWidget(
                         "Social Medial Post Link",

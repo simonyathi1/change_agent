@@ -132,13 +132,14 @@ class WidgetUtil {
     );
   }
 
-  void showAlertDialog(BuildContext context, String title, String message) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-    );
-    showDialog(context: context, builder: (_) => alertDialog);
-  }
+//  void show2BtnAlertDialog(BuildContext context, String title, String message, Function negativeAction, Function positiveAction) {
+//    AlertDialog alertDialog = AlertDialog(
+//      title: Text(title),
+//      content: Text(message),
+//      actions: <Widget>[],
+//    );
+//    showDialog(context: context, builder: (_) => alertDialog);
+//  }
 
   void show2BtnAlertDialog(BuildContext context, String title, String message, Function negativeAction, Function positiveAction) {
     showPlatformDialog(
@@ -667,7 +668,6 @@ class WidgetUtil {
       if (await canLaunch(url)) {
         await launch(url, forceWebView: true);
       } else {
-        print("FU");
         throw 'Could not launch $url';
       }
     } else {

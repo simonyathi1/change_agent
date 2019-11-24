@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:change_agent/database/i_admin_submission_view.dart';
 import 'package:change_agent/database/submission_data_presenter.dart';
 import 'package:change_agent/models/activity.dart';
@@ -11,6 +10,7 @@ import 'package:change_agent/utils/colors_util.dart';
 import 'package:change_agent/utils/functions_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
 import 'package:change_agent/views/currentChallenge/attemptActivityScreen.dart';
+import 'package:flutter/material.dart';
 
 class SubmissionReviewScreen extends StatefulWidget {
   final Submission _submission;
@@ -134,9 +134,19 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
             ],
           )
         : WidgetUtil().getButtonRow("Reject", "Approve", () {
-            _submissionDataPresenter.rejectSubmission();
+            WidgetUtil().show2BtnAlertDialog(
+                context,
+                "Reject Submission",
+                "You have selected the option to reject this submission. this will mark the activity rejected and prompt the user to re-attempt this. Are you sure this is what you intend?",
+                () => Navigator.pop(context),
+                () => _submissionDataPresenter.rejectSubmission());
           }, () {
-            _submissionDataPresenter.approveSubmission();
+            WidgetUtil().show2BtnAlertDialog(
+                context,
+                "Approve Submission",
+                "You have selected the option to approve this submission. This will mark the activity complet and allow the user to move forward. Are you sure this is what you intend?",
+                () => Navigator.pop(context),
+                () => _submissionDataPresenter.approveSubmission());
           });
   }
 

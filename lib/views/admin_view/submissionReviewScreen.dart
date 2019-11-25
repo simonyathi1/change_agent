@@ -137,14 +137,18 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
             WidgetUtil().show2BtnAlertDialog(
                 context,
                 "Reject Submission",
-                "You have selected the option to reject this submission. this will mark the activity rejected and prompt the user to re-attempt this. Are you sure this is what you intend?",
+                "You have selected the option to reject this submission. this will mark the activity rejected and prompt the user to re-attempt this. Are you sure you are marking this as rejected?",
+                "No",
+                "Yes Submit",
                 () => Navigator.pop(context),
                 () => _submissionDataPresenter.rejectSubmission());
           }, () {
             WidgetUtil().show2BtnAlertDialog(
                 context,
                 "Approve Submission",
-                "You have selected the option to approve this submission. This will mark the activity complet and allow the user to move forward. Are you sure this is what you intend?",
+                "You have selected the option to approve this submission. This will mark the activity complet and allow the user to move forward. Are you sure you are marking this as approved?",
+                "No",
+                "Yes Submit",
                 () => Navigator.pop(context),
                 () => _submissionDataPresenter.approveSubmission());
           });

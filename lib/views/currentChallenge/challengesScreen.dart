@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:change_agent/database/challenge_data_presenter.dart';
 import 'package:change_agent/database/i_challenge_view.dart';
 import 'package:change_agent/models/challenge.dart';
@@ -6,6 +5,7 @@ import 'package:change_agent/models/user.dart';
 import 'package:change_agent/utils/strings_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
 import 'package:change_agent/views/currentChallenge/activitiesScreen.dart';
+import 'package:flutter/material.dart';
 
 class ChallengesScreen extends StatefulWidget {
   final User _signedInUser;
@@ -41,8 +41,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   }
 
   Widget getChallengesListView() {
-    List <String> challengeStatusList =
-    StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
+    List<String> challengeStatusList =
+        StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
 
     return ListView.builder(
         itemCount: _challenges.length,
@@ -53,7 +53,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               borderOnForeground: false,
               color: Colors.transparent,
               elevation: 0,
-              child: WidgetUtil.getChallengeItem(
+              child: WidgetUtil.getChallengeItem(position,
                   _challenges[position], challengeStatusList[position], () {
                 if (_challenges[position].id !=
                         _signedInUser.currentChallengeID &&
@@ -78,10 +78,12 @@ class _ChallengesScreenState extends State<ChallengesScreen>
 
   @override
   void setChallenges(List<Challenge> challenges) {
-    setState(() {
-      _challenges = challenges;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _challenges = challenges;
+        _isLoading = false;
+      });
+    }
   }
 
   void navigateToActivityScreen(Challenge challenge, User user) async {
@@ -104,8 +106,14 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   void showSuccessMessage(String message) {
     // TODO: implement showSuccessMessage
   }
+
 //  void _navigateToPlaySermon(Challenge sermon) {
 //    Navigator.of(context).push(MaterialPageRoute(
 //        builder: (BuildContext context) => SermonPlayback(sermon)));
 //  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }

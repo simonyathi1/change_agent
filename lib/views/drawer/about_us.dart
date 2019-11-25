@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:change_agent/reources/dimens.dart';
 import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
+import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class AboutUs extends StatelessWidget {
@@ -15,18 +15,14 @@ class AboutUs extends StatelessWidget {
     return WillPopScope(
       child: Scaffold(
 //        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: ColorsUtil.colorAccent,
-          centerTitle: true,
-          elevation: 0.5,
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Text(StringsResource.aboutAppTitle,
-              style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                moveToPreviousScreen(true);
-              }),
+        appBar: WidgetUtil().getAppBar(
+          StringsResource.aboutAppTitle,
+          icon: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              moveToPreviousScreen(true);
+            },
+          ),
         ),
         body: WidgetUtil()
             .getGradientBackgroundContainer(Form(child: getDetailsScreen())),
@@ -41,7 +37,10 @@ class AboutUs extends StatelessWidget {
   Widget getDetailsScreen() {
     return Column(
       children: <Widget>[
-        Flexible(flex: 7, fit: FlexFit.tight,child: ListView(children: <Widget>[getTextWidget()])),
+        Flexible(
+            flex: 7,
+            fit: FlexFit.tight,
+            child: ListView(children: <Widget>[getTextWidget()])),
         Flexible(flex: 1, fit: FlexFit.tight, child: getButtonRow())
       ],
     );
@@ -52,15 +51,13 @@ class AboutUs extends StatelessWidget {
       padding: EdgeInsets.all(Dimens.sideMargin),
       child: new Text(
         StringsResource.about_us_description,
-        style: TextStyle(color: Colors.white, fontSize: 15.0),
+        style: TextStyle(color: Colors.black, fontSize: 18.0),
       ),
     );
   }
 
   Widget getButtonRow() {
-    return Padding(
-      padding: EdgeInsets.all(_minimumPadding*0.5),
-      child: Row(
+    return  Row(
         children: <Widget>[
           Expanded(
             child: Container(
@@ -73,10 +70,10 @@ class AboutUs extends StatelessWidget {
                       borderRadius: BorderRadius.circular(32)),
                   textColor: ColorsUtil.colorAccent,
                   child: Container(
-                      margin: EdgeInsets.symmetric(vertical: Dimens.sideMargin),
+                      margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
                       child: Text(
                         StringsResource.done,
-                        textScaleFactor: 1.5,
+                        style: TextStyle(fontSize: 18.0),
                       )),
                   onPressed: () {
                     moveToPreviousScreen(false);
@@ -84,8 +81,7 @@ class AboutUs extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   void moveToPreviousScreen(bool hasChanged) {

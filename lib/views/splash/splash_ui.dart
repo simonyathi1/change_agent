@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:change_agent/utils/colors_util.dart';
+import 'package:flutter/material.dart';
 
 class SplashUI extends StatefulWidget {
   @override
@@ -13,42 +13,30 @@ class SplashUIState extends State<SplashUI> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            child: Text(
-              'Change Agent',
-              style:
-                  TextStyle(fontSize: 24.0, color: ColorsUtil.primaryColorDark),
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white70,
-            ),
-          ),
-          SizedBox(height: 16.0),
-          Stack(
-            children: <Widget>[
-              CircularProgressIndicator(
-                strokeWidth: 8,
-                backgroundColor: ColorsUtil.colorAccent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              child: Text(
+                'Change Agent',
+                style: TextStyle(
+                    fontSize: 24.0, color: ColorsUtil.primaryColorDark),
               ),
-//        CircularProgressIndicator(
-//          strokeWidth: 16,
-//          backgroundColor: Colors.green,
-//        ),
-//        CircularProgressIndicator(
-//          strokeWidth: 16,
-//          backgroundColor: Colors.red,
-//        ),
-//        CircularProgressIndicator(
-//          strokeWidth: 16,
-//          backgroundColor: Colors.yellow,
-//        ),
-            ],
-          )
-        ],
-      )),
+              decoration: BoxDecoration(
+                color: Colors.white70,
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Stack(
+              children: <Widget>[
+                CircularProgressIndicator(
+                  strokeWidth: 8,
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }

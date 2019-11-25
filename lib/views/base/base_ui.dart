@@ -43,12 +43,12 @@ class BaseUIState extends State<BaseUI> {
       key: scaffoldKey,
       body: WidgetUtil().getBaseGradientContainer(_pages[currentPageIndex]),
       backgroundColor: ColorsUtil.colorAccent,
-      appBar: WidgetUtil().getOCJAppBar(StringsResource.appTitle),
+      appBar: WidgetUtil().getAppBar(StringsResource.appTitle),
       drawer: WidgetUtil()
           .getDrawer(_onPrivacyPolicyClick, _onAboutUsClick, _onSignOutClick),
       bottomNavigationBar: BubbleBottomBar(
         opacity: .2,
-        backgroundColor: ColorsUtil.primaryColorDark,
+        backgroundColor: ColorsUtil.primaryColorDark.withOpacity(.6),
         currentIndex: currentPageIndex,
         onTap: (int index) {
           setState(() {
@@ -60,7 +60,7 @@ class BaseUIState extends State<BaseUI> {
         //fabLocation: BubbleBottomBarFabLocation.end, //new
         hasNotch: true,
         //new
-        hasInk: true,
+        hasInk: false,
         //new, gives a cute ink effect
         inkColor: Colors.black12,
         //optional, uses theme color if not specified

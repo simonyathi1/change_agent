@@ -7,6 +7,7 @@ import 'package:change_agent/models/user.dart';
 import 'package:change_agent/reources/dimens.dart';
 import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
+import 'package:change_agent/utils/strings_util.dart';
 import 'package:change_agent/utils/validation_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
 import 'package:flutter/material.dart';
@@ -63,21 +64,14 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
     _buildContext = context;
     return WillPopScope(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: ColorsUtil.colorAccent,
-          centerTitle: true,
-          elevation: 0.5,
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Text(
-            StringsResource.activityAttempt,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-          ),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                moveToPreviousScreen(true);
-              }),
-        ),
+        appBar: WidgetUtil().getAppBar(StringsResource.activityAttempt,
+            icon: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                ),
+                onPressed: () {
+                  moveToPreviousScreen(true); // todo make it check
+                })),
         body: WidgetUtil().getActivityGradientBackgroundContainer(
             Form(child: getDetailsScreen())),
       ),
@@ -105,7 +99,7 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
       padding: EdgeInsets.all(Dimens.sideMargin),
       child: new Text(
         StringsResource.about_us_description,
-        style: TextStyle(color: Colors.white, fontSize: 15.0),
+        style: TextStyle(color: Colors.black, fontSize: 15.0),
       ),
     );
   }
@@ -122,8 +116,8 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                 Text(activity.name,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        letterSpacing: 8.0,
+                        color: Colors.black.withOpacity(.4),
                         fontSize: 22.0)),
                 SizedBox(
                   height: 6.0,
@@ -131,46 +125,64 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                 Text(
                   activity.points.toString() + " Points",
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.6), fontSize: 18.0),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black.withOpacity(0.8),
+                      fontSize: 18.0),
                 ),
                 Text(
                   activity.hourAllocation.toString() + " Hours",
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.6), fontSize: 18.0),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black.withOpacity(0.8),
+                      fontSize: 18.0),
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(
+                  height: 20.0,
+                ),
 
                 Text(
                   "Description",
                   style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      letterSpacing: 8.0,
+                      color: Colors.black.withOpacity(.4),
                       fontSize: 18.0),
-                ),
-                Text(
-                  activity.description,
-                  style: TextStyle(
-                      color: Colors.white.withOpacity(0.6), fontSize: 18.0),
                 ),
                 SizedBox(
                   height: 6.0,
                 ),
-
                 Text(
-                  "Submission instruction",
+                  activity.description,
                   style: TextStyle(
-                      color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black.withOpacity(0.8),
                       fontSize: 18.0),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  "Instruction",
+                  style: TextStyle(
+                      letterSpacing: 8.0,
+                      color: Colors.black.withOpacity(.4),
+                      fontSize: 18.0),
+                ),
+                SizedBox(
+                  height: 6.0,
                 ),
                 Text(
                   activity.activitySubmissionInstruction,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.6), fontSize: 18.0),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black.withOpacity(0.8),
+                      fontSize: 18.0),
                 ),
-                user.currentActivityStatus == "none" ||
-                        user.currentActivityStatus == "started" ||
-                        user.currentActivityStatus == "rejected"
+
+                SizedBox(
+                  height: 20.0,
+                ),
+
+                isSubmissionAllowed()
                     ? WidgetUtil().getTextFieldWidget(
                         "Social Medial Post Link",
                         "Enter social media post link",
@@ -186,72 +198,73 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
     );
   }
 
+  bool isSubmissionAllowed() {
+    List challengeStatusList =
+        StringsUtil.getDelimitedList(user.challengeStatus);
+    int index = int.parse(challenge.id) - 1;
+    return challengeStatusList[index] == "unlocked" ||
+        challengeStatusList[index] == "pending" ||
+        challengeStatusList[index] == "rejected";
+  }
+
   Widget getButtonRow() {
-    return user.currentActivityStatus == "none" ||
-            user.currentActivityStatus == "started" ||
-            user.currentActivityStatus == "rejected"
-        ? Padding(
-            padding: EdgeInsets.all(_minimumPadding * 0.5),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(_minimumPadding),
-                    child: RaisedButton(
-                        color: ColorsUtil.primaryColorDark,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(_buildContext).accentColor),
-                            borderRadius: BorderRadius.circular(32)),
-                        textColor: ColorsUtil.colorAccent,
-                        child: Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: Dimens.sideMargin),
-                            child: Text(
-                              StringsResource.submit,
-                              textScaleFactor: 1.5,
-                            )),
-                        onPressed: () {
-                          setState(() {
-                            if (ValidationUtil.emptyTextValidation(
-                                _submissionLinkController)) {
-                              _onSubmit();
-                            } else {
-                              _isLinkValid = false;
-                            }
-                          });
-                        }),
-                  ),
+    return isSubmissionAllowed()
+        ? Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(_minimumPadding),
+                  child: RaisedButton(
+                      color: ColorsUtil.primaryColorDark,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: Theme.of(_buildContext).accentColor),
+                          borderRadius: BorderRadius.circular(32)),
+                      textColor: ColorsUtil.colorAccent,
+                      child: Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                          child: Text(
+                            StringsResource.submit,
+                            style: TextStyle(fontSize: 18.0),
+                          )),
+                      onPressed: () {
+                        setState(() {
+                          if (ValidationUtil.emptyTextValidation(
+                              _submissionLinkController)) {
+                            _onSubmit();
+                          } else {
+                            _isLinkValid = false;
+                          }
+                        });
+                      }),
                 ),
-              ],
-            ),
+              ),
+            ],
           )
-        : Padding(
-            padding: EdgeInsets.all(_minimumPadding * 0.5),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(_minimumPadding),
-                    child: RaisedButton(
-                        color: ColorsUtil.primaryColorDark,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(_buildContext).accentColor),
-                            borderRadius: BorderRadius.circular(32)),
-                        textColor: ColorsUtil.colorAccent,
-                        child: Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: Dimens.sideMargin),
-                            child: Text(
-                              StringsResource.done,
-                              textScaleFactor: 1.5,
-                            )),
-                        onPressed: () => moveToPreviousScreen(true)),
-                  ),
+        : Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(_minimumPadding),
+                  child: RaisedButton(
+                      color: ColorsUtil.primaryColorDark,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: Theme.of(_buildContext).accentColor),
+                          borderRadius: BorderRadius.circular(32)),
+                      textColor: ColorsUtil.colorAccent,
+                      child: Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                          child: Text(
+                            StringsResource.done,
+                            style: TextStyle(fontSize: 18.0),
+                          )),
+                      onPressed: () => moveToPreviousScreen(true)),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
   }
 
@@ -259,7 +272,9 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
     WidgetUtil().show2BtnAlertDialog(
       context,
       "Submission Confirmation",
-      "Please make sure that you are submitting the correct link, otherwise your submission will be automatically rejected",
+      "Incorrect links will be rejected. Are you sure and happy about the link you are submitting?",
+      "No",
+      "Yes Submit",
       () => Navigator.pop(context),
       () => save(),
     );
@@ -310,5 +325,4 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
       this.user = user;
     });
   }
-
 }

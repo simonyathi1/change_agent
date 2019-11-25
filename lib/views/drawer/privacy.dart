@@ -1,3 +1,4 @@
+import 'package:change_agent/reources/dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
@@ -13,23 +14,14 @@ class PrivacyPolicy extends StatelessWidget {
     _buildContext = context;
     return WillPopScope(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: ColorsUtil.colorAccent,
-          centerTitle: true,
-          elevation: 0.5,
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Text(
-            StringsResource.aboutAppTitle,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        appBar: WidgetUtil().getAppBar(
+          StringsResource.privacyPolicy,
+          icon: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              moveToPreviousScreen(true);
+            },
           ),
-          leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                moveToPreviousScreen(true);
-              }),
         ),
         body: WidgetUtil()
             .getGradientBackgroundContainer(Form(child: getDetailsScreen())),
@@ -42,48 +34,52 @@ class PrivacyPolicy extends StatelessWidget {
   }
 
   Widget getDetailsScreen() {
-    return ListView(
-      children: <Widget>[getTextWidget(), getButtonRow()],
+    return Column(
+      children: <Widget>[
+        Flexible(
+            flex: 7,
+            fit: FlexFit.tight,
+            child: ListView(children: <Widget>[getTextWidget()])),
+        Flexible(flex: 1, fit: FlexFit.tight, child: getButtonRow())
+      ],
     );
   }
 
   Widget getTextWidget() {
     return Padding(
-      padding: EdgeInsets.all(_minimumPadding * 2),
+      padding: EdgeInsets.all(Dimens.sideMargin),
       child: new Text(
         StringsResource.about_us_description,
-        style: TextStyle(color: Colors.white70),
+        style: TextStyle(color: Colors.black, fontSize: 18.0),
       ),
     );
   }
 
   Widget getButtonRow() {
-    return Padding(
-      padding: EdgeInsets.all(_minimumPadding),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(
-                  left: _minimumPadding, right: _minimumPadding),
-              child: RaisedButton(
-                  color: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                          color: Theme.of(_buildContext).accentColor),
-                      borderRadius: BorderRadius.circular(20)),
-                  textColor: Colors.white70,
-                  child: Text(
-                    StringsResource.done,
-                    textScaleFactor: 1.5,
-                  ),
-                  onPressed: () {
-                    moveToPreviousScreen(false);
-                  }),
-            ),
+    return  Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.all(_minimumPadding),
+            child: RaisedButton(
+                color: ColorsUtil.primaryColorDark,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        color: Theme.of(_buildContext).accentColor),
+                    borderRadius: BorderRadius.circular(32)),
+                textColor: ColorsUtil.colorAccent,
+                child: Container(
+                    margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                    child: Text(
+                      StringsResource.done,
+                      style: TextStyle(fontSize: 18.0),
+                    )),
+                onPressed: () {
+                  moveToPreviousScreen(false);
+                }),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

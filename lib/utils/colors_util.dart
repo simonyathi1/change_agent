@@ -17,7 +17,7 @@ class ColorsUtil {
   static final primaryColor = const Color(0xFF06ac50);
   static final primaryColorDark = const Color(0xFF074ea3);
   static final colorAccent = const Color(0xFFc4eefb);
-  static final colorAccentPink = const Color(0xFF8cc63f);
+  static final colorAccentGreen = const Color(0xFF8cc63f);
   static final drawerHeaderBase = const Color(0xFF020809);
 
 }

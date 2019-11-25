@@ -1,3 +1,4 @@
+import 'package:change_agent/utils/colors_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -94,8 +95,30 @@ class GoogleSignInScreenState extends State<GoogleSignInScreen>
                     ],
                   )
                 : Center(
-                    child: CircularProgressIndicator(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      'Change Agent',
+                      style: TextStyle(
+                          fontSize: 24.0, color: ColorsUtil.primaryColorDark),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                    ),
                   ),
+                  SizedBox(height: 16.0),
+                  Stack(
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        strokeWidth: 8,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),

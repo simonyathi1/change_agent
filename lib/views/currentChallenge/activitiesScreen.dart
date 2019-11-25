@@ -56,26 +56,15 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
   Widget getActivitiesView() {
     return WillPopScope(
         child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: ColorsUtil.colorAccent,
-              centerTitle: true,
-              elevation: 0.5,
-              iconTheme: IconThemeData(color: Colors.white),
-              title: Text(
-                StringsResource.activities,
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-              ),
-              leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    moveToPreviousScreen(true);
-                  }),
-            ),
-            backgroundColor: ColorsUtil.primaryColorDark,
+            appBar: WidgetUtil().getAppBar(StringsResource.activities,
+                icon: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                    ),
+                    onPressed: () {
+                      moveToPreviousScreen(true); // todo make it check
+                    })),
+            backgroundColor: ColorsUtil.primaryColorDark.withOpacity(0.1),
             body: getDetailsScreen()),
         // ignore: missing_return
         onWillPop: () {
@@ -99,13 +88,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
         ),
         Flexible(
           flex: 7,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: Dimens.baseMargin),
-            child: WidgetUtil.getActivityDetailsWidget(
-                _activityList[ActivityValue.values.indexOf(_activityValue)],
-                context),
-          ),
-        )
+          child: WidgetUtil.getActivityDetailsWidget(
+              _activityList[ActivityValue.values.indexOf(_activityValue)],
+              context),
+        ),
       ],
     );
   }
@@ -120,57 +106,47 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
   }
 
   Widget getButtonRow() {
-    return Padding(
-      padding: EdgeInsets.all(0.0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.all(16.0),
-              child: RaisedButton(
-                  color: ColorsUtil.primaryColorDark,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                          color: Theme.of(_buildContext).accentColor),
-                      borderRadius: BorderRadius.circular(32)),
-                  textColor: ColorsUtil.colorAccent,
-                  child: Container(
-                      margin: EdgeInsets.symmetric(vertical: Dimens.sideMargin),
-                      child: Text(
-                        _signedInUser.currentActivityStatus == "none"
-                            ? StringsResource.startActivity
-                            : _signedInUser.currentActivityStatus == "started"
-                                ? StringsResource.continueActivity
-                                : _signedInUser.currentActivityStatus ==
-                                        "rejected"
-                                    ? StringsResource.retryActivity
-                                    : StringsResource.viewActivityDetails,
-                      )),
-                  onPressed: () {
-                    if (_signedInUser.currentActivityStatus == "none") {
-                      WidgetUtil().show2BtnAlertDialog(
-                        context,
-                        "Are you sure",
-                        "Selected Activity cannot be changed, please make sure you are selecting one you will be able to complete",
-                        () => Navigator.pop(context),
-                        () => navigateToActivityScreen(
-                            challenge,
-                            _signedInUser,
-                            _activityList[
-                                ActivityValue.values.indexOf(_activityValue)]),
-                      );
-                    } else {
-                      navigateToActivityScreen(
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            child: RaisedButton(
+                color: ColorsUtil.primaryColorDark,
+                shape: RoundedRectangleBorder(
+                    side:
+                        BorderSide(color: Theme.of(_buildContext).accentColor),
+                    borderRadius: BorderRadius.circular(32)),
+                textColor: ColorsUtil.colorAccent,
+                child: Container(
+                    margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                    child: getButtonText()),
+                onPressed: () {
+                  if (_signedInUser.currentActivityStatus == "none") {
+                    WidgetUtil().show2BtnAlertDialog(
+                      context,
+                      "Acivity selection confirmation",
+                      "Please make sure this is an activity you will be able to complete. Have you read and understood what this activity requires of you",
+                      "No",
+                      "Yes Continue",
+                      () => Navigator.pop(context),
+                      () => navigateToActivityScreen(
                           challenge,
                           _signedInUser,
                           _activityList[
-                              ActivityValue.values.indexOf(_activityValue)]);
-                    }
-                  }),
-            ),
+                              ActivityValue.values.indexOf(_activityValue)]),
+                    );
+                  } else {
+                    navigateToActivityScreen(
+                        challenge,
+                        _signedInUser,
+                        _activityList[
+                            ActivityValue.values.indexOf(_activityValue)]);
+                  }
+                }),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -198,6 +174,22 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
             : challengeStatusList[index] == "rejected"
                 ? Colors.red
                 : Colors.white;
+  }
+
+  Text getButtonText() {
+    List challengeStatusList =
+        StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
+    int index = int.parse(challenge.id) - 1;
+    return Text(
+      challengeStatusList[index] == "unlocked"
+          ? StringsResource.startActivity
+          : challengeStatusList[index] == "pending"
+              ? StringsResource.continueActivity
+              : challengeStatusList[index] == "rejected"
+                  ? StringsResource.retryActivity
+                  : StringsResource.viewActivityDetails,
+      style: TextStyle(fontSize: 18.0),
+    );
   }
 
   modeSelectionChanged(ActivityValue value) {

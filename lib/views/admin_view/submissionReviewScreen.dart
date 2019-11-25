@@ -233,4 +233,9 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
       hasApprovedOrRejected = true;
     });
   }
+
+  @override
+  void setUser(User user) {
+    // TODO: implement setUser
+  }
 }

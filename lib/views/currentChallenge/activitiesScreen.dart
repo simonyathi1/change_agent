@@ -149,22 +149,22 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
                   onPressed: () {
                     if (_signedInUser.currentActivityStatus == "none") {
                       WidgetUtil().show2BtnAlertDialog(
-                          context,
-                          "Are you sure",
-                          "Selected Activity cannot be changed, please make sure you are selecting one you will be able to complete",
-                              () => Navigator.pop(context),
-                              () => navigateToActivityScreen(
-                              challenge,
-                              _signedInUser,
-                              _activityList[
-                              ActivityValue.values.indexOf(_activityValue)]));
-                    }
-                    else{
+                        context,
+                        "Are you sure",
+                        "Selected Activity cannot be changed, please make sure you are selecting one you will be able to complete",
+                        () => Navigator.pop(context),
+                        () => navigateToActivityScreen(
+                            challenge,
+                            _signedInUser,
+                            _activityList[
+                                ActivityValue.values.indexOf(_activityValue)]),
+                      );
+                    } else {
                       navigateToActivityScreen(
                           challenge,
                           _signedInUser,
                           _activityList[
-                          ActivityValue.values.indexOf(_activityValue)]);
+                              ActivityValue.values.indexOf(_activityValue)]);
                     }
                   }),
             ),
@@ -268,6 +268,9 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
 
   void navigateToActivityScreen(
       Challenge challenge, User user, Activity activity) async {
+    if (_signedInUser.currentActivityStatus == "none") {
+      Navigator.pop(context);
+    }
     bool hasChangedChannel = await Navigator.push(this.context,
         MaterialPageRoute(builder: (context) {
       return AttemptActivityScreen(challenge, user, activity);

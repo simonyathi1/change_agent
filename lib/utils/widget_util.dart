@@ -145,8 +145,8 @@ class WidgetUtil {
     showPlatformDialog(
       context: context,
       builder: (_) => PlatformAlertDialog(
-        title: Text('Alert'),
-        content: Text('Some content'),
+        title: Text(title),
+        content: Text(message),
         actions: <Widget>[
           _platformDialogAction("Cancel",negativeAction),
           _platformDialogAction("OK",positiveAction),

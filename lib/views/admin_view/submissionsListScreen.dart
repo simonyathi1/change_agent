@@ -113,4 +113,9 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
   void setSubmission(Submission submission) {
     // TODO: implement setSubmission
   }
+
+  @override
+  void setUser(User user) {
+    // TODO: implement setUser
+  }
 }

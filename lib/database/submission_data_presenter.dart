@@ -67,6 +67,7 @@ class SubmissionDataPresenter {
 
     _saveSpecifiedUser(_user);
     updateUserInFireBase();
+    _iSubmissionView.setUser(_user);
   }
 
   void rejectSubmission() {

@@ -78,8 +78,8 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                 moveToPreviousScreen(true);
               }),
         ),
-        body: WidgetUtil()
-            .getActivityGradientBackgroundContainer(Form(child: getDetailsScreen())),
+        body: WidgetUtil().getActivityGradientBackgroundContainer(
+            Form(child: getDetailsScreen())),
       ),
       // ignore: missing_return
       onWillPop: () {
@@ -215,7 +215,7 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                           setState(() {
                             if (ValidationUtil.emptyTextValidation(
                                 _submissionLinkController)) {
-                              _save();
+                              _onSubmit();
                             } else {
                               _isLinkValid = false;
                             }
@@ -255,7 +255,18 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
           );
   }
 
-  void _save() {
+  void _onSubmit() {
+    WidgetUtil().show2BtnAlertDialog(
+      context,
+      "Submission Confirmation",
+      "Please make sure that you are submitting the correct link, otherwise your submission will be automatically rejected",
+      () => Navigator.pop(context),
+      () => save(),
+    );
+  }
+
+  void save() {
+    Navigator.pop(context);
     Submission submission = Submission(
         activity.name,
         _submissionLinkController.text,
@@ -292,4 +303,12 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
   void showSuccessMessage(String message) {
     // TODO: implement showSuccessMessage
   }
+
+  @override
+  void setUser(User user) {
+    setState(() {
+      this.user = user;
+    });
+  }
+
 }

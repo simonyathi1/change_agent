@@ -35,7 +35,7 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
   @override
   void initState() {
     super.initState();
-
+    hasDataChanged = false;
     _submissionDataPresenter =
         SubmissionDataPresenter.adminAudit(this, submission);
     _submissionDataPresenter.getUserFromFireBase();
@@ -50,26 +50,15 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
   Widget getActivitiesView() {
     return WillPopScope(
         child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: ColorsUtil.colorAccent,
-              centerTitle: true,
-              elevation: 0.5,
-              iconTheme: IconThemeData(color: Colors.white),
-              title: Text(
-                StringsResource.activities,
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-              ),
-              leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    moveToPreviousScreen(hasDataChanged);
-                  }),
-            ),
-            backgroundColor: ColorsUtil.primaryColorDark,
+            appBar: WidgetUtil().getAppBar(StringsResource.submission,
+                icon: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                    ),
+                    onPressed: () {
+                      moveToPreviousScreen(hasDataChanged);
+                    })),
+            backgroundColor: ColorsUtil.primaryColorDark.withOpacity(0.1),
             body: getDetailsScreen()),
         // ignore: missing_return
         onWillPop: () {
@@ -88,11 +77,8 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
         ),
         Flexible(
           flex: 7,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: Dimens.baseMargin),
-            child: WidgetUtil.getSubmissionDetailsWidget(submission, context),
-          ),
-        )
+          child: WidgetUtil.getSubmissionDetailsWidget(submission, context),
+        ),
       ],
     );
   }
@@ -112,7 +98,7 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
             children: <Widget>[
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.all(16.0),
+                  margin: EdgeInsets.symmetric(horizontal: 16.0),
                   child: RaisedButton(
                       color: ColorsUtil.primaryColorDark,
                       shape: RoundedRectangleBorder(
@@ -122,7 +108,7 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
                       textColor: ColorsUtil.colorAccent,
                       child: Container(
                           margin:
-                              EdgeInsets.symmetric(vertical: Dimens.sideMargin),
+                              EdgeInsets.symmetric(vertical: Dimens.baseMargin),
                           child: Text(
                             StringsResource.done,
                           )),
@@ -139,19 +125,29 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
                 "Reject Submission",
                 "You have selected the option to reject this submission. this will mark the activity rejected and prompt the user to re-attempt this. Are you sure you are marking this as rejected?",
                 "No",
-                "Yes Submit",
+                "Yes Reject",
                 () => Navigator.pop(context),
-                () => _submissionDataPresenter.rejectSubmission());
+                () => _reject());
           }, () {
             WidgetUtil().show2BtnAlertDialog(
                 context,
                 "Approve Submission",
                 "You have selected the option to approve this submission. This will mark the activity complet and allow the user to move forward. Are you sure you are marking this as approved?",
                 "No",
-                "Yes Submit",
+                "Yes Approve",
                 () => Navigator.pop(context),
-                () => _submissionDataPresenter.approveSubmission());
+                () => _approve());
           });
+  }
+
+  void _approve(){
+    Navigator.pop(context);
+    _submissionDataPresenter.approveSubmission();
+  }
+
+  void _reject(){
+    Navigator.pop(context);
+    _submissionDataPresenter.rejectSubmission();
   }
 
   String getTextAreaViewText() {
@@ -193,25 +189,6 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
   void moveToPreviousScreen(bool hasChanged) {
     Navigator.pop(_buildContext, hasChanged);
   }
-
-  @override
-//  void setActivities(List<Activity> activities) {
-//    setState(() {
-//      _activityList = activities;
-//      _isLoading = false;
-//
-//      int selectedIndex = 0;
-//      _activityList.forEach((activity) {
-//        if (activity.id == _signedInUser.currentActivityID) {
-//          selectedIndex = _activityList.indexOf(activity);
-//        }
-//      });
-//
-//      if (_signedInUser.currentActivityStatus != "none") {
-//        _activityValue = ActivityValue.values[selectedIndex];
-//      }
-//    });
-//  }
 
   @override
   void showFailureMessage(String message) {

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:change_agent/database/i_admin_submission_view.dart';
 import 'package:change_agent/database/submission_data_presenter.dart';
 import 'package:change_agent/models/submission.dart';
@@ -6,6 +5,8 @@ import 'package:change_agent/models/user.dart';
 import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
+import 'package:change_agent/views/sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
 
 import 'submissionReviewScreen.dart';
 
@@ -39,16 +40,14 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorsUtil.colorAccent,
-        centerTitle: true,
-        elevation: 0.5,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          StringsResource.submissions,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-      ),
+      appBar: WidgetUtil().getAdminAppBar(StringsResource.submissions,
+          trailingIcon: IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+              ),
+              onPressed: () {
+                _onSignOutClick();
+              })),
       backgroundColor: ColorsUtil.primaryColorDark,
       body: WidgetUtil().getGradientBackgroundContainer(
         _isLoading
@@ -68,7 +67,8 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
               borderOnForeground: false,
               color: Colors.transparent,
               elevation: 0,
-              child: WidgetUtil.getSubmissionItem(_submissions[position], () {
+              child: WidgetUtil.getSubmissionItem(
+                  position, _submissions[position], () {
                 navigateToActivityReviewScreen(_submissions[position]);
               }),
             ));
@@ -117,5 +117,25 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
   @override
   void setUser(User user) {
     // TODO: implement setUser
+  }
+
+  void _onSignOutClick() {
+    WidgetUtil().show2BtnAlertDialog(
+      context,
+      "Sign Out?",
+      "Are you sure you want to sign out of the app?",
+      "No",
+      "Yes",
+      () => Navigator.pop(context),
+      () => _signOut(),
+    );
+  }
+
+  void _signOut() {
+    Navigator.pushReplacement(
+      context,
+      new MaterialPageRoute(
+          builder: (context) => new GoogleSignInScreen(signOut: true)),
+    );
   }
 }

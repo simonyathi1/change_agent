@@ -39,8 +39,8 @@ class _WFTOAppState extends State<WFTOApp> {
         textSelectionColor: primaryColor,
         primaryTextTheme: TextTheme(title: TextStyle(color: Colors.black)),
         highlightColor: primaryColor,
-        hintColor: Colors.white70,
-        unselectedWidgetColor: Colors.white70,
+        hintColor: Colors.black45,
+        unselectedWidgetColor: Colors.black,
       ),
       home: hasLoaded ? GoogleSignInScreen() : SplashUI(),
     );

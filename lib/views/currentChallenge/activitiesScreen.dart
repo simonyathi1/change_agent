@@ -122,7 +122,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
                     margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
                     child: getButtonText()),
                 onPressed: () {
-                  if (_signedInUser.currentActivityStatus == "none") {
+                  if (_signedInUser.currentActivityStatus == "none" && _signedInUser.currentChallengeID == challenge.id) {
                     WidgetUtil().show2BtnAlertDialog(
                       context,
                       "Acivity selection confirmation",
@@ -157,7 +157,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
     return challengeStatusList[index] == "complete"
         ? "Challenge already complete"
         : challengeStatusList[index] == "pending"
-            ? "Challenge pending review"
+            ? "Challenge pending"
             : challengeStatusList[index] == "rejected"
                 ? "Challenge rejected, try again"
                 : "Attempt one activity";
@@ -170,7 +170,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
     return challengeStatusList[index] == "complete"
         ? Colors.green
         : challengeStatusList[index] == "pending"
-            ? Colors.yellow
+            ? Colors.orange
             : challengeStatusList[index] == "rejected"
                 ? Colors.red
                 : Colors.white;
@@ -181,11 +181,11 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
         StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
     int index = int.parse(challenge.id) - 1;
     return Text(
-      challengeStatusList[index] == "unlocked"
+      _signedInUser.currentActivityStatus == "none" && _signedInUser.currentChallengeID == challenge.id
           ? StringsResource.startActivity
-          : challengeStatusList[index] == "pending"
+          : (_signedInUser.currentActivityStatus == "started" && _signedInUser.currentChallengeID == challenge.id)
               ? StringsResource.continueActivity
-              : challengeStatusList[index] == "rejected"
+              : _signedInUser.currentActivityStatus == "rejected"
                   ? StringsResource.retryActivity
                   : StringsResource.viewActivityDetails,
       style: TextStyle(fontSize: 18.0),
@@ -203,7 +203,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
         StringsUtil.getDelimitedList(challenge.activityIDs).length;
     return Container(
       child: new Center(
-        child: _signedInUser.currentActivityStatus == "none"
+        child: _signedInUser.currentActivityStatus == "none" && _signedInUser.currentChallengeID == challenge.id
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[

@@ -105,10 +105,6 @@ class BaseUIState extends State<BaseUI> {
         MaterialPageRoute(builder: (BuildContext context) => PrivacyPolicy()));
   }
 
-  Future<GoogleSignInScreen> _signOut() async {
-    return new GoogleSignInScreen();
-  }
-
   void _onSignOutClick() {
     Navigator.pushReplacement(
       context,

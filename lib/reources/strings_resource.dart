@@ -61,4 +61,6 @@ class StringsResource {
   static String get user => "User";
 
   static String get challenges => "Challenges";
+
+  static String get submission => "Submission";
 }

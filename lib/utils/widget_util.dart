@@ -81,12 +81,15 @@ class WidgetUtil {
     );
   }
 
-  static Widget getSubmissionItem(Submission submission, Function onClick) {
+  static Widget getSubmissionItem(int position, Submission submission, Function onClick) {
 //    Widget speakerImage = WidgetUtil().getSpeakerImage(sermon);
     Widget detailsView = WidgetUtil().submissionTileDetail(submission);
 
     return GestureDetector(
       child: Container(
+        margin: position % 2 == 0
+            ? EdgeInsets.only(bottom: 16.0, right: 32.0, left: 0.0)
+            : EdgeInsets.only(bottom: 16.0, right: 0.0, left: 32.0),
         child: detailsView,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(const Radius.circular(20.0)),
@@ -95,9 +98,9 @@ class WidgetUtil {
             end: Alignment.bottomCenter,
             stops: [0.1, 0.65, 1],
             colors: [
-              ColorsUtil.primaryColorDark.withOpacity(0.2),
-              ColorsUtil.primaryColorDark.withOpacity(0.2),
-              ColorsUtil.primaryColorDark.withOpacity(0.2),
+              ColorsUtil.primaryColorDark.withOpacity(0.1),
+              ColorsUtil.primaryColorDark.withOpacity(0.1),
+              ColorsUtil.primaryColorDark.withOpacity(0.1),
             ],
           ),
         ),
@@ -362,13 +365,13 @@ class WidgetUtil {
       submission.title,
       textAlign: TextAlign.left,
       style: TextStyle(
-          color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.0),
+          color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16.0),
     );
 
     var submittedMaterial = Text(
       submission.submittedMaterial,
       textAlign: TextAlign.left,
-      style: TextStyle(color: Colors.white54, fontSize: 12.0),
+      style: TextStyle(color: Colors.black45, fontSize: 12.0),
     );
 
     var status = ListTile(
@@ -382,21 +385,41 @@ class WidgetUtil {
                   Icons.remove_circle,
                   color: Colors.orange,
                 )
-              : submission.submissionStatus == "rejected"
-                  ? Icon(
+              : Icon(
                       Icons.cancel,
                       color: Colors.red,
-                    )
-                  : submission.submissionStatus == "locked"
-                      ? Icon(
-                          Icons.lock,
-                          color: Colors.grey,
-                        )
-                      : Icon(
-                          Icons.lock_open,
-                          color: Colors.white,
-                        ),
+                    ),
+      title: submission.submissionStatus == "approved"
+          ? Text(
+        "Complete",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            letterSpacing: 8.0,
+            color: Colors.black.withOpacity(.2),
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0),
+      )
+          : submission.submissionStatus == "pending"
+          ? Text(
+        "Pending",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            letterSpacing: 8.0,
+            color: Colors.black.withOpacity(.2),
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0),
+      )
+          : Text(
+        "Rejected",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            letterSpacing: 8.0,
+            color: Colors.black.withOpacity(.2),
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0),
+      ),
     );
+
     return Padding(
         padding:
             EdgeInsets.only(left: Dimens.baseMargin, bottom: Dimens.baseMargin),
@@ -591,7 +614,7 @@ class WidgetUtil {
           keyboardType: isNumber ? TextInputType.number : TextInputType.text,
           decoration: InputDecoration(
               labelText: label,
-              //labelStyle: appliedTextStyle,
+              labelStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
               errorStyle: TextStyle(fontSize: 15),
               hintText: hint,
               hintStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
@@ -605,30 +628,30 @@ class WidgetUtil {
 
   Widget getButtonRow(String negativeButtonText, String primaryButtonText,
       Function onNegativeButtonClick, Function onPrimaryButtonClick) {
-    return Padding(
-      padding: EdgeInsets.all(_minimumPadding),
-      child: Row(
+    return Row(
         children: <Widget>[
           Expanded(
             child: Container(
               margin: EdgeInsets.only(
                   left: _minimumPadding, right: _minimumPadding),
               child: RaisedButton(
-                  color: Colors.transparent,
+                  color: ColorsUtil.primaryColorDark,
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: ColorsUtil.primaryColor),
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(32)),
                   textColor: Colors.white70,
-                  child: Text(
-                    negativeButtonText,
-                    textScaleFactor: 1.5,
-                  ),
+                  child: Container(
+                      margin:
+                      EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                      child: Text(
+                        negativeButtonText,
+                        style: TextStyle(fontSize: 18.0),
+                      )),
                   onPressed: onNegativeButtonClick),
             ),
           ),
           getPrimaryButton(primaryButtonText, onPrimaryButtonClick),
         ],
-      ),
     );
   }
 
@@ -639,13 +662,16 @@ class WidgetUtil {
       margin: EdgeInsets.only(left: _minimumPadding, right: _minimumPadding),
       child: RaisedButton(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           color: ColorsUtil.primaryColor,
           textColor: Colors.black,
-          child: Text(
-            primaryButtonText,
-            textScaleFactor: 1.5,
-          ),
+          child: Container(
+              margin:
+              EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+              child: Text(
+                primaryButtonText,
+                style: TextStyle(fontSize: 18.0),
+              )),
           onPressed: onPrimaryButtonClick),
     ));
   }
@@ -819,21 +845,14 @@ class WidgetUtil {
                 ? activity.name
                 : "Activity " + (index + 1).toString(),
             style: TextStyle(
-              color: Colors.white70,
+              color: Colors.black,
             )),
         leading: Radio(
-          activeColor: ColorsUtil.colorAccent,
+          activeColor: ColorsUtil.colorAccentGreen,
           value: activityValue,
           groupValue: groupValue,
           onChanged: onChangeMade,
-        ),
-        trailing: GestureDetector(
-          child: Icon(
-            Icons.edit,
-            color: Colors.white70,
-          ),
-          onTap: onEditTap,
-        ));
+        ),);
   }
 
   FloatingActionButton getFAB(Function onFABClick) {
@@ -1177,8 +1196,8 @@ class WidgetUtil {
                   Text(submission.title,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          letterSpacing: 8.0,
+                          color: Colors.black.withOpacity(.4),
                           fontSize: 22.0)),
                   SizedBox(
                     height: 6.0,
@@ -1186,47 +1205,55 @@ class WidgetUtil {
                   Text(
                     submission.points.toString() + " Points",
                     style: TextStyle(
-                        color: Colors.white.withOpacity(0.6), fontSize: 18.0),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.8), fontSize: 18.0),
                   ),
-                  SizedBox(height: 16.0),
-
+                  SizedBox(
+                    height: 20.0,
+                  ),
                   Text(
                     "Descrption",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        letterSpacing: 8.0,
+                        color: Colors.black.withOpacity(.4),
                         fontSize: 18.0),
+                  ),
+                  SizedBox(
+                    height: 6.0,
                   ),
                   Text(
                     submission.activityDescription,
                     style: TextStyle(
-                        color: Colors.white.withOpacity(0.6), fontSize: 18.0),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.8), fontSize: 18.0),
                   ),
                   SizedBox(
-                    height: 6.0,
+                    height: 20.0,
                   ),
                   Text(
                     "Duration",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        letterSpacing: 8.0,
+                        color: Colors.black.withOpacity(.4),
                         fontSize: 18.0),
                   ),
-
-                  Text(
-                    FunctionsUtil.calculateTimeLapseForDisplay(submission),
-                    style: TextStyle(
-                        color: Colors.white.withOpacity(0.6), fontSize: 18.0),
-                  ),
-
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
+                    FunctionsUtil.calculateTimeLapseForDisplay(submission),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.8), fontSize: 18.0),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Text(
                     "Review",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        letterSpacing: 8.0,
+                        color: Colors.black.withOpacity(.4),
                         fontSize: 18.0),
                   ),
                   Row(
@@ -1243,7 +1270,7 @@ class WidgetUtil {
                             textColor: ColorsUtil.colorAccent,
                             child: Container(
                                 margin: EdgeInsets.symmetric(
-                                    vertical: Dimens.sideMargin),
+                                    vertical: Dimens.baseMargin),
                                 child: Text(
                                   "View Social Media Post",
                                 )),
@@ -1268,8 +1295,8 @@ class WidgetUtil {
           end: Alignment.bottomCenter,
           stops: [0.1, 0.65, 1],
           colors: [
-            ColorsUtil.primaryColorDark.withOpacity(0.6),
-            ColorsUtil.primaryColorDark.withOpacity(0.4),
+            ColorsUtil.primaryColorDark.withOpacity(0.0),
+            ColorsUtil.primaryColorDark.withOpacity(0.0),
             ColorsUtil.primaryColorDark.withOpacity(0.0),
           ],
         ),
@@ -1289,7 +1316,21 @@ class WidgetUtil {
       centerTitle: true,
       brightness: Brightness.light,
       backgroundColor: Colors.white,
-      leading: icon,
+    );
+  }
+  getAdminAppBar(String appTitle, {IconButton icon, IconButton trailingIcon}) {
+    return AppBar(
+      elevation: 0.5,
+      iconTheme: IconThemeData(color: ColorsUtil.colorAccentGreen),
+      title: Text(
+        appTitle,
+        style: TextStyle(
+            color: ColorsUtil.colorAccentGreen, fontWeight: FontWeight.w700),
+      ),
+      centerTitle: true,
+      brightness: Brightness.light,
+      backgroundColor: Colors.white,
+      actions: <Widget>[trailingIcon],
     );
   }
 }

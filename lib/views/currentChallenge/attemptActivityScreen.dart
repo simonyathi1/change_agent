@@ -7,7 +7,6 @@ import 'package:change_agent/models/user.dart';
 import 'package:change_agent/reources/dimens.dart';
 import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
-import 'package:change_agent/utils/strings_util.dart';
 import 'package:change_agent/utils/validation_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
 import 'package:flutter/material.dart';
@@ -199,12 +198,14 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
   }
 
   bool isSubmissionAllowed() {
-    List challengeStatusList =
-        StringsUtil.getDelimitedList(user.challengeStatus);
-    int index = int.parse(challenge.id) - 1;
-    return challengeStatusList[index] == "unlocked" ||
-        challengeStatusList[index] == "pending" ||
-        challengeStatusList[index] == "rejected";
+//    List challengeStatusList =
+//        StringsUtil.getDelimitedList(user.challengeStatus);
+//    int index = int.parse(user.currentChallengeID) - 1;
+    return user.currentActivityStatus == "none" &&
+            user.currentChallengeID == challenge.id ||
+        (user.currentActivityStatus == "started" &&
+            user.currentChallengeID == challenge.id) ||
+        user.currentActivityStatus == "rejected";
   }
 
   Widget getButtonRow() {

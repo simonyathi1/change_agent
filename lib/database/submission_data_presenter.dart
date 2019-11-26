@@ -71,7 +71,6 @@ class SubmissionDataPresenter {
   }
 
   void rejectSubmission() {
-    _submission.finishTime = "";
     _submission.submissionStatus = "rejected";
     saveSubmissionToFireBase();
 

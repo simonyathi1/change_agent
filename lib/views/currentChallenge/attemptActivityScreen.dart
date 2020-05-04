@@ -9,6 +9,7 @@ import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
 import 'package:change_agent/utils/validation_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
+import 'package:change_agent/views/base/base_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
@@ -36,6 +37,9 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
   User user;
   Activity activity;
   SubmissionDataPresenter _submissionDataPresenter;
+  Submission _submission;
+
+  bool displayHelpOverlay = false;
 
   _AttemptActivityScreenState(this.challenge, this.user, this.activity);
 
@@ -44,7 +48,6 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
   @override
   void initState() {
     _isLinkValid = true;
-
     _submissionDataPresenter =
         SubmissionDataPresenter(this, challenge, activity, user);
     KeyboardVisibilityNotification().addNewListener(
@@ -65,41 +68,38 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
       child: Scaffold(
         appBar: WidgetUtil().getAppBar(StringsResource.activityAttempt,
             icon: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                ),
-                onPressed: () {
-                  moveToPreviousScreen(true); // todo make it check
-                })),
-        body: WidgetUtil().getActivityGradientBackgroundContainer(
-            Form(child: getDetailsScreen())),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: isSubmissionAllowed()?ColorsUtil.colorAccentGreen: Colors.transparent,
+                    ),
+                    onPressed: () {
+                      moveToPreviousScreen(true); // todo make it check
+                    })),
+        body: WidgetUtil()
+            .getGradientBackgroundContainer(Form(child: getDetailsScreen())),
       ),
       // ignore: missing_return
       onWillPop: () {
-        moveToPreviousScreen(false);
+         moveToPreviousScreen(false);
       },
     );
   }
 
   Widget getDetailsScreen() {
-    return Column(
+    return Stack(
       children: <Widget>[
-        Flexible(
-            flex: 7,
-            fit: FlexFit.tight,
-            child: getActivityDetailsWidget(activity, context)),
-        Flexible(flex: _buttonFlex, fit: FlexFit.tight, child: getButtonRow())
+        Column(
+          children: <Widget>[
+            Flexible(
+                flex: 7,
+                fit: FlexFit.tight,
+                child: getActivityDetailsWidget(activity, context)),
+            Flexible(
+                flex: _buttonFlex, fit: FlexFit.tight, child: getButtonRow())
+          ],
+        ),
+        displayHelpOverlay ? getOverlay() : SizedBox.shrink()
       ],
-    );
-  }
-
-  Widget getTextWidget() {
-    return Padding(
-      padding: EdgeInsets.all(Dimens.sideMargin),
-      child: new Text(
-        StringsResource.about_us_description,
-        style: TextStyle(color: Colors.black, fontSize: 15.0),
-      ),
     );
   }
 
@@ -110,71 +110,60 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // SizedBox(height: 52.0),
                 Text(activity.name,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 22.0)),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(.8),
+                        fontSize: 16.0)),
                 SizedBox(
                   height: 6.0,
                 ),
                 Text(
                   activity.points.toString() + " Points",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.8),
-                      fontSize: 18.0),
+                      color: Colors.black.withOpacity(0.8), fontSize: 14.0),
                 ),
                 Text(
                   activity.hourAllocation.toString() + " Hours",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.8),
-                      fontSize: 18.0),
+                      color: Colors.black.withOpacity(0.8), fontSize: 14.0),
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
 
-                Text(
-                  "Description",
-                  style: TextStyle(
-                      letterSpacing: 8.0,
-                      color: Colors.black.withOpacity(.4),
-                      fontSize: 18.0),
-                ),
+                Text("Decription",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(.8),
+                        fontSize: 16.0)),
                 SizedBox(
                   height: 6.0,
                 ),
                 Text(
                   activity.description,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.8),
-                      fontSize: 18.0),
+                      color: Colors.black.withOpacity(0.8), fontSize: 14.0),
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
-                Text(
-                  "Instruction",
-                  style: TextStyle(
-                      letterSpacing: 8.0,
-                      color: Colors.black.withOpacity(.4),
-                      fontSize: 18.0),
-                ),
+                Text("Instruction",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(.8),
+                        fontSize: 16.0)),
                 SizedBox(
                   height: 6.0,
                 ),
                 Text(
                   activity.activitySubmissionInstruction,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.8),
-                      fontSize: 18.0),
+                      color: Colors.black.withOpacity(0.8), fontSize: 14.0),
                 ),
 
                 SizedBox(
@@ -182,18 +171,39 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                 ),
 
                 isSubmissionAllowed()
-                    ? WidgetUtil().getTextFieldWidget(
-                        "Social Medial Post Link",
-                        "Enter social media post link",
-                        _submissionLinkController,
-                        _isLinkValid,
-                        StringsResource.linkCannotBeEmpty)
-                    : Container(),
+                    ? getTextWithHelpButton()
+                    : Text("Status",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black.withOpacity(.8),
+                            fontSize: 16.0)),
+                SizedBox(
+                  height: 6.0,
+                ),
+                Text(
+                  "Submitted and pending review",
+                  style: TextStyle(
+                      color: Colors.black.withOpacity(0.8), fontSize: 14.0),
+                ),
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget getTextWithHelpButton() {
+    var textWidget = WidgetUtil().getTextFieldWidget(
+        "Social Medial Post Link",
+        "Enter social media post link",
+        _submissionLinkController,
+        _isLinkValid,
+        StringsResource.linkCannotBeEmpty);
+
+    return Stack(
+      children: <Widget>[textWidget, getHelpButton()],
+      alignment: Alignment.topRight,
     );
   }
 
@@ -227,7 +237,7 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
                               EdgeInsets.symmetric(vertical: Dimens.baseMargin),
                           child: Text(
                             StringsResource.submit,
-                            style: TextStyle(fontSize: 18.0),
+                            style: TextStyle(fontSize: 15.0),
                           )),
                       onPressed: () {
                         setState(() {
@@ -277,11 +287,103 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
       "No",
       "Yes Submit",
       () => Navigator.pop(context),
-      () => save(),
+      () => _save(),
     );
   }
 
-  void save() {
+  var title = Text(
+    "How submission works\n",
+    style: TextStyle(
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.0),
+  );
+  var howItWorks = Text(
+    "The way it works is that once you have completed the challenge "
+    "and posted on social media, you will need to copy the link"
+    "to your post and submit it here. The admin will audit the submission and "
+    "measure it against the requirements fot the challenge. Dead links, incorrect links,"
+    " etc will all lead to a rejected submission, upon which you will have to do this again."
+    " Note that submissions done withini the specified timeframe will lead to getting the bonus"
+    " points as specified, if submission is made after the time has passed, you will just get the base points\n",
+    style: TextStyle(color: Colors.black, fontSize: 18.0),
+  );
+  var copyTweetTitle = Text(
+    "How to copy Tweet link\n",
+    style: TextStyle(
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.0),
+  );
+  var howToCopy = Text(
+    "To copy the link on Twitter, click the tweet to view it. Click the "
+    "share button, one of the options provided will be copy link to tweet. Copy it, "
+    "and paste it in the provided input field. You will be notified when there is a result\n\n",
+    style: TextStyle(color: Colors.black, fontSize: 18.0),
+  );
+
+  var tapAnywhereToClose = Text(
+    "Tap Anywhere To Close!!!\n\n",
+    style: TextStyle(
+        color: Colors.black,
+        fontSize: 20.0,
+        letterSpacing: 5.0,
+        fontWeight: FontWeight.bold),
+    textAlign: TextAlign.center,
+  );
+
+  Widget getOverlay() {
+    return GestureDetector(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: Padding(
+            padding: EdgeInsets.all(Dimens.sideMargin),
+            child: ListView(
+              children: <Widget>[
+                title,
+                howItWorks,
+                copyTweetTitle,
+                howToCopy,
+                tapAnywhereToClose
+              ],
+            )),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.1, 0.65, 1],
+            colors: [
+              Colors.white.withOpacity(1.0),
+              Colors.white.withOpacity(1.0),
+              Colors.white.withOpacity(0.8),
+            ],
+          ),
+        ),
+      ),
+      onTap: () => setState(() {
+        displayHelpOverlay = false;
+      }),
+    );
+  }
+
+  Widget getHelpButton() {
+    return RaisedButton(
+        color: ColorsUtil.primaryColorDark,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: Theme.of(_buildContext).accentColor),
+            borderRadius: BorderRadius.circular(40)),
+        textColor: ColorsUtil.colorAccent,
+        child: Container(
+            margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+            child: Text(
+              "?",
+              style: TextStyle(fontSize: 22.0),
+            )),
+        onPressed: () {
+          setState(() {
+            displayHelpOverlay = true;
+          });
+        });
+  }
+
+  void _save() {
     Navigator.pop(context);
     Submission submission = Submission(
         activity.name,
@@ -308,6 +410,12 @@ class _AttemptActivityScreenState extends State<AttemptActivityScreen>
 
   void moveToPreviousScreen(bool hasChanged) {
     Navigator.pop(_buildContext, hasChanged);
+  }
+
+  void navigateToHomeScreen(BuildContext context, User user) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return BaseUI(user);
+    }));
   }
 
   @override

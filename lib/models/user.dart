@@ -61,9 +61,7 @@ class User {
 
   String get challengeStatus => _challengeStatus;
 
-
   String get currentActivityStartTime => _currentActivityStartTime;
-
 
   String get currentActivitySubmissionTime => _currentActivitySubmissionTime;
 
@@ -157,7 +155,8 @@ class User {
     this._activitiesDone = map["activities_done"];
     this._challengeStatus = map["challenge_status"];
     this._currentActivityStartTime = map["current_activity_start_time"];
-    this._currentActivitySubmissionTime = map["current_activity_submission_time"];
+    this._currentActivitySubmissionTime =
+        map["current_activity_submission_time"];
   }
 
   User.fromSnapshot(DocumentSnapshot snapShot)
@@ -172,7 +171,9 @@ class User {
         this._points = snapShot["points"],
         this._userEmail = snapShot["user_email"],
         this._activitiesDone = snapShot["activities_done"],
-        this._currentActivityStartTime = snapShot["current_activity_start_time"],
-        this._currentActivitySubmissionTime = snapShot["current_activity_submission_time"],
+        this._currentActivityStartTime =
+            snapShot["current_activity_start_time"],
+        this._currentActivitySubmissionTime =
+            snapShot["current_activity_submission_time"],
         this._challengeStatus = snapShot["challenge_status"];
 }

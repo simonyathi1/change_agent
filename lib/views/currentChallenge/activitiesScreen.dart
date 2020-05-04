@@ -82,6 +82,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
               context,
               itemsColor: Colors.black,
               barColor: getSafeAreaColor(),
+              challenge: challenge
             ),
             getActivitiesRadioButtonsListView(_activityList),
           ],
@@ -181,14 +182,16 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
         StringsUtil.getDelimitedList(_signedInUser.challengeStatus);
     int index = int.parse(challenge.id) - 1;
     return Text(
-      _signedInUser.currentActivityStatus == "none" && _signedInUser.currentChallengeID == challenge.id
+      _signedInUser.currentActivityStatus == "none" &&
+              _signedInUser.currentChallengeID == challenge.id
           ? StringsResource.startActivity
-          : (_signedInUser.currentActivityStatus == "started" && _signedInUser.currentChallengeID == challenge.id)
+          : (_signedInUser.currentActivityStatus == "started" &&
+                  _signedInUser.currentChallengeID == challenge.id)
               ? StringsResource.continueActivity
               : _signedInUser.currentActivityStatus == "rejected"
                   ? StringsResource.retryActivity
                   : StringsResource.viewActivityDetails,
-      style: TextStyle(fontSize: 18.0),
+      style: TextStyle(fontSize: 15.0),
     );
   }
 
@@ -203,7 +206,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
         StringsUtil.getDelimitedList(challenge.activityIDs).length;
     return Container(
       child: new Center(
-        child: _signedInUser.currentActivityStatus == "none" && _signedInUser.currentChallengeID == challenge.id
+        child: _signedInUser.currentActivityStatus == "none" &&
+                _signedInUser.currentChallengeID == challenge.id
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[

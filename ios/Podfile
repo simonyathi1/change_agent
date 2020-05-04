@@ -4,12 +4,6 @@
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-pod 'Firebase/Analytics'
-pod 'Firebase/Auth'
-pod 'Firebase/Firestore'
-pod 'FirebaseFirestoreSwift'
-pod 'FirebaseCore'
-
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
@@ -41,7 +35,13 @@ end
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-  
+
+    pod 'Firebase/Analytics'
+    pod 'Firebase/Auth'
+    pod 'Firebase/Firestore'
+    pod 'FirebaseFirestoreSwift'
+    pod 'FirebaseCore'
+
   # Flutter Pod
 
   copied_flutter_dir = File.join(__dir__, 'Flutter')
@@ -83,9 +83,6 @@ target 'Runner' do
     pod name, :path => File.join(symlink, 'ios')
   end
 end
-
-# Prevent Cocoapods from embedding a second Flutter framework and causing an error with the new Xcode build system.
-install! 'cocoapods', :disable_input_output_paths => true
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

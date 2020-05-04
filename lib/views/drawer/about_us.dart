@@ -48,40 +48,95 @@ class AboutUs extends StatelessWidget {
 
   Widget getTextWidget() {
     return Padding(
-      padding: EdgeInsets.all(Dimens.sideMargin),
-      child: new Text(
-        StringsResource.about_us_description,
-        style: TextStyle(color: Colors.black, fontSize: 18.0),
-      ),
-    );
+        padding: EdgeInsets.all(Dimens.sideMargin),
+        child: Column(
+          children: <Widget>[
+            Text(
+              StringsResource.aboutUsDescriptionWelcome,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold),
+            ),
+            Text(
+              StringsResource.aboutUsDescriptionTop,
+              style: TextStyle(color: Colors.black, fontSize: 18.0),
+            ),
+            Padding(
+              padding: EdgeInsets.all(Dimens.sideMargin),
+              child: Text(
+                StringsResource.aboutUsDescriptionBeginnerRanks,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            WidgetUtil.getAboutUsItem(0),
+            WidgetUtil.getAboutUsItem(1),
+            WidgetUtil.getAboutUsItem(2),
+            WidgetUtil.getAboutUsItem(3),
+            WidgetUtil.getAboutUsItem(4),
+            Padding(
+              padding: EdgeInsets.all(Dimens.sideMargin),
+              child: Text(
+                StringsResource.aboutUsDescriptionIntermediateRanks,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            WidgetUtil.getAboutUsItem(5),
+            WidgetUtil.getAboutUsItem(6),
+            WidgetUtil.getAboutUsItem(7),
+            WidgetUtil.getAboutUsItem(8),
+            Padding(
+              padding: EdgeInsets.all(Dimens.sideMargin),
+              child: Text(
+                StringsResource.aboutUsDescriptionTopRanks,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            WidgetUtil.getAboutUsItem(9),
+            Text(
+              StringsResource.aboutUsDescriptionBottom,
+              style: TextStyle(color: Colors.black, fontSize: 18.0),
+            ),
+          ],
+        ));
   }
 
   Widget getButtonRow() {
-    return  Row(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.all(_minimumPadding),
-              child: RaisedButton(
-                  color: ColorsUtil.primaryColorDark,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                          color: Theme.of(_buildContext).accentColor),
-                      borderRadius: BorderRadius.circular(32)),
-                  textColor: ColorsUtil.colorAccent,
-                  child: Container(
-                      margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
-                      child: Text(
-                        StringsResource.done,
-                        style: TextStyle(fontSize: 18.0),
-                      )),
-                  onPressed: () {
-                    moveToPreviousScreen(false);
-                  }),
-            ),
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.all(_minimumPadding),
+            child: RaisedButton(
+                color: ColorsUtil.primaryColorDark,
+                shape: RoundedRectangleBorder(
+                    side:
+                        BorderSide(color: Theme.of(_buildContext).accentColor),
+                    borderRadius: BorderRadius.circular(32)),
+                textColor: ColorsUtil.colorAccent,
+                child: Container(
+                    margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                    child: Text(
+                      StringsResource.done,
+                      style: TextStyle(fontSize: 18.0),
+                    )),
+                onPressed: () {
+                  moveToPreviousScreen(false);
+                }),
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   void moveToPreviousScreen(bool hasChanged) {

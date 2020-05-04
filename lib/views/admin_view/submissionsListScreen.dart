@@ -6,6 +6,7 @@ import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/utils/colors_util.dart';
 import 'package:change_agent/utils/widget_util.dart';
 import 'package:change_agent/views/sign_in/google_sign_in.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'submissionReviewScreen.dart';
@@ -25,6 +26,7 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
   List<Submission> _submissions = List();
   bool _isLoading = false;
   User _signedInUser;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
   SubmissionDataPresenter _submissionDataPresenter;
 
   _SubmissionsListScreenState(this._signedInUser);
@@ -33,6 +35,7 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
   void initState() {
     _submissionDataPresenter = SubmissionDataPresenter.admin(this);
     _submissionDataPresenter.getSubmissionsFromFireBase();
+    _onInitState(context);
     _isLoading = true;
     super.initState();
   }
@@ -58,26 +61,33 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
   }
 
   Widget getSubmissionsListView() {
-    return ListView.builder(
-        itemCount: _submissions.length,
-        itemBuilder: (BuildContext context, int position) {
-          if (_submissions.isNotEmpty) {
+    var pendingSubmissions = List();
+    _submissions.forEach((submission) {
+      if (submission.submissionStatus == "pending" && !pendingSubmissions.contains(submission)) {
+        pendingSubmissions.add(submission);
+      }
+    });
+
+    if (pendingSubmissions.isNotEmpty) {
+      return ListView.builder(
+          itemCount: pendingSubmissions.length,
+          itemBuilder: (BuildContext context, int position) {
             return Container(
                 child: Card(
-              borderOnForeground: false,
-              color: Colors.transparent,
-              elevation: 0,
-              child: WidgetUtil.getSubmissionItem(
-                  position, _submissions[position], () {
-                navigateToActivityReviewScreen(_submissions[position]);
-              }),
-            ));
-          } else {
-            return Center(
-              child: Text("No Submissions"),
-            );
-          }
-        });
+                  borderOnForeground: false,
+                  color: Colors.transparent,
+                  elevation: 0,
+                  child: WidgetUtil.getSubmissionItem(
+                      position, pendingSubmissions[position], () {
+                    navigateToActivityReviewScreen(pendingSubmissions[position]);
+                  }),
+                ));
+          });
+    } else {
+      return Center(
+        child: Text("No Pending Submissions"),
+      );
+    }
   }
 
   void navigateToActivityReviewScreen(Submission submission) async {
@@ -138,4 +148,48 @@ class _SubmissionsListScreenState extends State<SubmissionsListScreen>
           builder: (context) => new GoogleSignInScreen(signOut: true)),
     );
   }
+
+  void _onInitState(BuildContext context) {
+    _subscribeToTopicAsAdmin();
+    var msg = "";
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        msg == (message['notification']['body'])? showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                content: ListTile(
+                  title: Text(message['notification']['title']),
+                  subtitle: Text(message['notification']['body']),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      _submissionDataPresenter.getSubmissionsFromFireBase();
+                      Navigator.of(context).pop();},
+                  ),
+                ],
+              ),
+        ): "";
+        msg = (message['notification']['body']);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        msg == (message['notification']['body'])?
+        _submissionDataPresenter.getSubmissionsFromFireBase():"";
+        msg = (message['notification']['body']);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        msg == (message['notification']['body'])?
+        _submissionDataPresenter.getSubmissionsFromFireBase():"";
+        msg = (message['notification']['body']);
+      },
+    );
+  }
+
+  _subscribeToTopicAsAdmin(){
+    _fcm.subscribeToTopic('submissions');
+  }
+
 }

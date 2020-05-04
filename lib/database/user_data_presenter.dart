@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:change_agent/utils/functions_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:change_agent/database/i_user_view.dart';
 import 'package:change_agent/models/user.dart';
+
+import 'package:change_agent/reources/strings_resource.dart';
 
 import 'database_helper.dart';
 
@@ -11,15 +18,12 @@ class UserDataPresenter {
   User _user;
   List _userList = List<User>();
   final DatabaseHelper databaseHelper = DatabaseHelper();
-  final databaseReference = Firestore.instance;
-//  List<Activity>activities = List();
+  final Firestore databaseReference = Firestore.instance;
+
+  final FirebaseMessaging _fcm = FirebaseMessaging();
 
   UserDataPresenter(IUserView iUserView) {
     this._iUserView = iUserView;
-//    getActivities();
-//    activities.forEach((activity) {
-//      saveActivitiesToFireBase(activity);
-//    });
   }
 
   void setUser(User user) {
@@ -34,6 +38,7 @@ class UserDataPresenter {
       initializeUser();
       saveUserToFireBase();
       result = await databaseHelper.insertUser(_user);
+      //_saveDeviceToken();
     } else {
       return;
     }
@@ -101,7 +106,7 @@ class UserDataPresenter {
     _user.currentActivityID = "none";
     _user.currentActivity = "none";
     _user.currentActivityStatus = "none";
-    _user.currentLevel = "Change Dreamer";
+    _user.currentLevel = FunctionsUtil.getCurrentRank("1");
     _user.currentChallengeID = "1";
     _user.points = 0;
     _user.activitiesDone = "-";
@@ -109,7 +114,6 @@ class UserDataPresenter {
     _user.currentActivitySubmissionTime = "";
     _user.challengeStatus =
     "unlocked*locked*locked*locked*locked*locked*locked*locked*locked";
-
   }
 
   void setDataBaseUser() {
@@ -200,6 +204,25 @@ class UserDataPresenter {
       if (user.id == _user.id) {
         _iUserView.setUser(user);
       }
+    }
+  }
+
+  _saveDeviceToken() async {
+    String fcmToken = await _fcm.getToken();
+
+    // Save it to Firestore
+    if (fcmToken != null) {
+      var tokens = databaseReference
+          .collection('users')
+          .document(_user.id)
+          .collection('tokens')
+          .document(fcmToken);
+
+      await tokens.setData({
+        'token': fcmToken,
+        'createdAt': FieldValue.serverTimestamp(), // optional
+        'platform': Platform.operatingSystem // optional
+      });
     }
   }
 }

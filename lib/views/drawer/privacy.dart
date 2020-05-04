@@ -49,7 +49,7 @@ class PrivacyPolicy extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(Dimens.sideMargin),
       child: new Text(
-        StringsResource.about_us_description,
+        StringsResource.privacyPolicyPlaceHolder,
         style: TextStyle(color: Colors.black, fontSize: 18.0),
       ),
     );

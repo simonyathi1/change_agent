@@ -56,7 +56,7 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
                       Icons.arrow_back,
                     ),
                     onPressed: () {
-                      moveToPreviousScreen(hasDataChanged);
+                      FunctionsUtil.moveToPreviousScreen(hasDataChanged, context);
                     })),
             backgroundColor: ColorsUtil.primaryColorDark.withOpacity(0.1),
             body: getDetailsScreen()),
@@ -204,6 +204,7 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
   void setSubmissionList(List submissionList) {
     setState(() {
       hasApprovedOrRejected = true;
+      hasDataChanged = true;
     });
   }
 
@@ -212,6 +213,7 @@ class _SubmissionReviewScreenState extends State<SubmissionReviewScreen>
     setState(() {
       submission = submission;
       hasApprovedOrRejected = true;
+      hasDataChanged = true;
     });
   }
 

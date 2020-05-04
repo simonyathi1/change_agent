@@ -1,9 +1,3 @@
-import 'package:change_agent/utils/colors_util.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:change_agent/database/i_user_view.dart';
 import 'package:change_agent/database/user_data_presenter.dart';
 import 'package:change_agent/models/provider.dart';
@@ -11,6 +5,11 @@ import 'package:change_agent/models/user.dart';
 import 'package:change_agent/reources/strings_resource.dart';
 import 'package:change_agent/views/admin_view/submissionsListScreen.dart';
 import 'package:change_agent/views/base/base_ui.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInScreen extends StatefulWidget {
   final bool signOut;
@@ -95,30 +94,26 @@ class GoogleSignInScreenState extends State<GoogleSignInScreen>
                     ],
                   )
                 : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    child: Text(
-                      'Change Agent',
-                      style: TextStyle(
-                          fontSize: 24.0, color: ColorsUtil.primaryColorDark),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white70,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset(
+                          "assets/images/change_splash.png",
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.fill,
+                        ),
+                        SizedBox(height: 16.0),
+                        Text("Be The Change"),
+                        SizedBox(height: 16.0),
+                        Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 8,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 16.0),
-                  Stack(
-                    children: <Widget>[
-                      CircularProgressIndicator(
-                        strokeWidth: 8,
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -219,11 +214,11 @@ class GoogleSignInScreenState extends State<GoogleSignInScreen>
   navigateHome(User user) {
     MaterialPageRoute screen = user.id == StringsResource.adminUserID
         ? MaterialPageRoute(
-      builder: (context) => new SubmissionsListScreen(user),
-    )
+            builder: (context) => new SubmissionsListScreen(user),
+          )
         : MaterialPageRoute(
-      builder: (context) => new BaseUI(user),
-    );
+            builder: (context) => new BaseUI(user),
+          );
 
     Navigator.pushReplacement(
       context,

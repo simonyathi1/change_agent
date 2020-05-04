@@ -22,7 +22,7 @@ class Challenge {
   set title(String value) {
     _title = value;
   }
-
+//sqflite
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
@@ -35,13 +35,14 @@ class Challenge {
 
     return map;
   }
-
+//sqflite
   Challenge.fromMapObject(Map<String, dynamic> map) {
     this._id = map["id"];
     this._title = map["title"];
     this._activityIDs = map["activity_ids"];
   }
 
+  //firebase
   Challenge.fromSnapshot(DocumentSnapshot snapShot)
       : this._id = snapShot["id"],
         this._title = snapShot["title"],

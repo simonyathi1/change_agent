@@ -16,24 +16,13 @@ class SplashUIState extends State<SplashUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              child: Text(
-                'Change Agent',
-                style: TextStyle(
-                    fontSize: 24.0, color: ColorsUtil.primaryColorDark),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white70,
-              ),
+            Image.asset("assets/images/change_splash.png",
+              width: 200,
+              height: 200,
+              fit:BoxFit.fill,
             ),
             SizedBox(height: 16.0),
-            Stack(
-              children: <Widget>[
-                CircularProgressIndicator(
-                  strokeWidth: 8,
-                ),
-              ],
-            )
+            Text("Change Agent")
           ],
         ),
       ),

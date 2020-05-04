@@ -53,25 +53,22 @@ class WidgetUtil {
 
   static Widget getChallengeItem(int position, Challenge challenge,
       String challengeStatus, Function onClick) {
-//    Widget speakerImage = WidgetUtil().getSpeakerImage(sermon);
     Widget detailsView =
-        WidgetUtil().challengeTileDetail(challenge, challengeStatus);
+        WidgetUtil().challengeTileDetail(challenge, challengeStatus, position);
 
     return GestureDetector(
       child: Container(
-        margin: position % 2 == 0
-            ? EdgeInsets.only(bottom: 16.0, right: 32.0, left: 0.0)
-            : EdgeInsets.only(bottom: 16.0, right: 0.0, left: 32.0),
+        margin: EdgeInsets.only(bottom: 8.0, right: 16.0, left: 16.0),
         child: detailsView,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(const Radius.circular(20.0)),
+          borderRadius: BorderRadius.all(const Radius.circular(10.0)),
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             stops: [0.1, 0.65, 1],
             colors: [
-              ColorsUtil.primaryColorDark.withOpacity(0.1),
-              ColorsUtil.primaryColorDark.withOpacity(0.1),
+              ColorsUtil.primaryColorDark.withOpacity(0.3),
+              ColorsUtil.primaryColorDark.withOpacity(0.2),
               ColorsUtil.primaryColorDark.withOpacity(0.1),
             ],
           ),
@@ -81,25 +78,54 @@ class WidgetUtil {
     );
   }
 
-  static Widget getSubmissionItem(int position, Submission submission, Function onClick) {
+  static Widget getAboutUsItem(int position) {
+    Widget image =
+        Image.asset(FunctionsUtil.getCurrentRankBadge(position.toString()));
+    Widget title = Text(
+      FunctionsUtil.getRanks()[position],
+      style: TextStyle(color: Colors.black.withOpacity(.8), fontSize: 18.0),
+    );
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.0),
+      child: ListTile(
+        leading: image,
+        title: title,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(const Radius.circular(10.0)),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.01, 0.01, 1],
+          colors: [
+            ColorsUtil.primaryColorDark.withOpacity(0.5),
+            ColorsUtil.primaryColorDark.withOpacity(0.1),
+            ColorsUtil.primaryColorDark.withOpacity(0.0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget getSubmissionItem(
+      int position, Submission submission, Function onClick) {
 //    Widget speakerImage = WidgetUtil().getSpeakerImage(sermon);
     Widget detailsView = WidgetUtil().submissionTileDetail(submission);
 
     return GestureDetector(
       child: Container(
-        margin: position % 2 == 0
-            ? EdgeInsets.only(bottom: 16.0, right: 32.0, left: 0.0)
-            : EdgeInsets.only(bottom: 16.0, right: 0.0, left: 32.0),
+        margin: EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
         child: detailsView,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(const Radius.circular(20.0)),
+          borderRadius: BorderRadius.all(const Radius.circular(10.0)),
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             stops: [0.1, 0.65, 1],
             colors: [
-              ColorsUtil.primaryColorDark.withOpacity(0.1),
-              ColorsUtil.primaryColorDark.withOpacity(0.1),
+              ColorsUtil.primaryColorDark.withOpacity(0.3),
+              ColorsUtil.primaryColorDark.withOpacity(0.2),
               ColorsUtil.primaryColorDark.withOpacity(0.1),
             ],
           ),
@@ -227,28 +253,14 @@ class WidgetUtil {
   }
 
   Widget userImageWidget(String imageLink) {
-    if (imageLink.isEmpty) {
+    if (imageLink == null || imageLink.isEmpty) {
       return Container(
-          child: CircleAvatar(
-        radius: 75.0,
-        backgroundColor: Colors.grey,
-        child: CircleAvatar(
-          radius: 74.0,
-          backgroundColor: Colors.black45,
-          child: CircleAvatar(
-            radius: 73.0,
-            backgroundColor: Colors.lightBlueAccent,
-            child: CircleAvatar(
-              radius: 72.0,
-              backgroundColor: Colors.black87,
-              child: Icon(
-                Icons.account_circle,
-                color: Colors.deepOrange.withOpacity(0.7),
-              ),
-            ),
-          ),
+        child: Icon(
+          Icons.account_circle,
+          color: ColorsUtil.primaryColorDark.withOpacity(.6),
+          size: 200.0,
         ),
-      ));
+      );
     } else {
       return Stack(children: <Widget>[
         CircleAvatar(
@@ -259,12 +271,26 @@ class WidgetUtil {
     }
   }
 
-  Widget challengeTileDetail(Challenge challenge, String challengeStatus) {
+  Widget challengeTileDetail(
+      Challenge challenge, String challengeStatus, int position) {
+    List rankBadgeUris = [
+      "assets/images/1_change_private.png",
+      "assets/images/2_change_private_first_class.png",
+      "assets/images/3_change_specialist.png",
+      "assets/images/4_change_corporal.png",
+      "assets/images/5_change_sergeant.png",
+      "assets/images/6_change_staff_sergeant.png",
+      "assets/images/7_change_master_sergeant.png",
+      "assets/images/8_change_sergeant_major.png",
+      "assets/images/9_change_commander.png",
+      "assets/images/10_change_agent.png"
+    ];
+
     var title = Text(
       challenge.title,
-      textAlign: TextAlign.left,
+      textAlign: TextAlign.center,
       style: TextStyle(
-          color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16.0),
+          color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14.0),
     );
 
     var activities = Text(
@@ -277,105 +303,171 @@ class WidgetUtil {
     );
 
     var status = ListTile(
-      trailing: challengeStatus == "complete"
-          ? Icon(
-              Icons.check_circle,
-              color: Colors.green,
-            )
-          : challengeStatus == "pending"
-              ? Icon(
-                  Icons.remove_circle,
-                  color: Colors.orange,
-                )
-              : challengeStatus == "rejected"
-                  ? Icon(
-                      Icons.cancel,
-                      color: Colors.red,
-                    )
-                  : challengeStatus == "locked"
-                      ? Icon(
-                          Icons.lock,
-                          color: Colors.grey,
-                        )
-                      : Icon(
-                          Icons.lock_open,
-                          color: Colors.white,
-                        ),
-      title: challengeStatus == "complete"
-          ? Text(
-              "Complete",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  letterSpacing: 8.0,
-                  color: Colors.black.withOpacity(.2),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0),
-            )
-          : challengeStatus == "pending"
-              ? Text(
-                  "Pending",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      letterSpacing: 8.0,
-                      color: Colors.black.withOpacity(.2),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0),
-                )
-              : challengeStatus == "rejected"
-                  ? Text(
-                      "Rejected",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          letterSpacing: 8.0,
-                          color: Colors.black.withOpacity(.2),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0),
-                    )
-                  : challengeStatus == "locked"
-                      ? Text(
-                          "Locked",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              letterSpacing: 8.0,
-                              color: Colors.black.withOpacity(.2),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0),
-                        )
-                      : Text(
-                          "Unlocked",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              letterSpacing: 8.0,
-                              color: Colors.black.withOpacity(.2),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0),
-                        ),
-    );
-    return Padding(
-        padding:
-            EdgeInsets.only(left: Dimens.baseMargin, bottom: Dimens.baseMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[status, title, activities],
+        trailing: challengeStatus == "complete"
+            ? Icon(
+                Icons.check_circle,
+                color: Colors.green,
+              )
+            : challengeStatus == "pending"
+                ? Icon(
+                    Icons.remove_circle,
+                    color: Colors.orange,
+                  )
+                : challengeStatus == "rejected"
+                    ? Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                      )
+                    : challengeStatus == "locked"
+                        ? Icon(
+                            Icons.lock,
+                            color: Colors.grey,
+                          )
+                        : Icon(
+                            Icons.lock_open,
+                            color: Colors.white,
+                          ),
+        title: Text(
+          FunctionsUtil.getCurrentRank((position + 2).toString()),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+              fontSize: 15.0),
+        ),
+        subtitle: challengeStatus == "complete"
+            ? Text(
+                "Complete",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    letterSpacing: 8.0,
+                    color: Colors.black.withOpacity(.2),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0),
+              )
+            : challengeStatus == "pending"
+                ? Text(
+                    "Pending",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        letterSpacing: 8.0,
+                        color: Colors.black.withOpacity(.2),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.0),
+                  )
+                : challengeStatus == "rejected"
+                    ? Text(
+                        "Rejected",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            letterSpacing: 8.0,
+                            color: Colors.black.withOpacity(.2),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.0),
+                      )
+                    : challengeStatus == "locked"
+                        ? Text(
+                            "Locked",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                letterSpacing: 8.0,
+                                color: Colors.black.withOpacity(.2),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.0),
+                          )
+                        : Text(
+                            "Unlocked",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                letterSpacing: 8.0,
+                                color: Colors.black.withOpacity(.2),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.0),
+                          ),
+        leading: Hero(
+          tag: challenge,
+          child: Container(
+            child: Image.asset(
+              rankBadgeUris[position + 1],
+              height: 25.0,
+            ),
+          ),
         ));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        status,
+        Padding(
+          padding: EdgeInsets.only(
+              left: Dimens.baseMargin, bottom: Dimens.baseMargin),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[title, activities],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget submissionTileDetail(Submission submission) {
     var title = Text(
-      submission.title,
+      "    ${submission.title}",
       textAlign: TextAlign.left,
       style: TextStyle(
-          color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16.0),
+          color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14.0),
+    );
+
+    var titleLabel = Text(
+      "Submitted activity: ",
+      textAlign: TextAlign.left,
+      style: TextStyle(color: Colors.black.withOpacity(0.8), fontSize: 12.0),
     );
 
     var submittedMaterial = Text(
-      submission.submittedMaterial,
+      "    ${submission.submittedMaterial}",
       textAlign: TextAlign.left,
-      style: TextStyle(color: Colors.black45, fontSize: 12.0),
+      style: TextStyle(
+          color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14.0),
     );
 
-    var status = ListTile(
-      trailing: submission.submissionStatus == "approved"
+    var submissionLabel = Text(
+      "Submission link: ",
+      textAlign: TextAlign.left,
+      style: TextStyle(color: Colors.black.withOpacity(0.8), fontSize: 12.0),
+    );
+
+    var status = submission.submissionStatus == "approved"
+        ? Text(
+            "Complete",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                letterSpacing: 8.0,
+                color: Colors.black.withOpacity(.6),
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0),
+          )
+        : submission.submissionStatus == "pending"
+            ? Text(
+                "Pending",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    letterSpacing: 8.0,
+                    color: Colors.black.withOpacity(.6),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
+              )
+            : Text(
+                "Rejected",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    letterSpacing: 8.0,
+                    color: Colors.black.withOpacity(.2),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
+              );
+
+    var statusIcon = Container(
+      child: submission.submissionStatus == "approved"
           ? Icon(
               Icons.check_circle,
               color: Colors.green,
@@ -386,38 +478,9 @@ class WidgetUtil {
                   color: Colors.orange,
                 )
               : Icon(
-                      Icons.cancel,
-                      color: Colors.red,
-                    ),
-      title: submission.submissionStatus == "approved"
-          ? Text(
-        "Complete",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            letterSpacing: 8.0,
-            color: Colors.black.withOpacity(.2),
-            fontWeight: FontWeight.bold,
-            fontSize: 16.0),
-      )
-          : submission.submissionStatus == "pending"
-          ? Text(
-        "Pending",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            letterSpacing: 8.0,
-            color: Colors.black.withOpacity(.2),
-            fontWeight: FontWeight.bold,
-            fontSize: 16.0),
-      )
-          : Text(
-        "Rejected",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            letterSpacing: 8.0,
-            color: Colors.black.withOpacity(.2),
-            fontWeight: FontWeight.bold,
-            fontSize: 16.0),
-      ),
+                  Icons.cancel,
+                  color: Colors.red,
+                ),
     );
 
     return Padding(
@@ -425,7 +488,20 @@ class WidgetUtil {
             EdgeInsets.only(left: Dimens.baseMargin, bottom: Dimens.baseMargin),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[status, title, submittedMaterial],
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+//              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[status, statusIcon],
+            ),
+            SizedBox(
+              height: 8.0,
+            ),
+            titleLabel,
+            title,
+            submissionLabel,
+            submittedMaterial,
+          ],
         ));
   }
 
@@ -516,11 +592,11 @@ class WidgetUtil {
 //            ColorsUtil.primaryColorDark,
           ],
         ),
-      ),
-//          image: DecorationImage(
-//              image: AssetImage("assets/images/.......png"),
-//              fit: BoxFit.cover)),
 
+        image: DecorationImage(
+            image: AssetImage("assets/images/military_bg.jpg"),
+            fit: BoxFit.cover),
+      ),
       child: child,
     );
   }
@@ -629,29 +705,28 @@ class WidgetUtil {
   Widget getButtonRow(String negativeButtonText, String primaryButtonText,
       Function onNegativeButtonClick, Function onPrimaryButtonClick) {
     return Row(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(
-                  left: _minimumPadding, right: _minimumPadding),
-              child: RaisedButton(
-                  color: ColorsUtil.primaryColorDark,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: ColorsUtil.primaryColor),
-                      borderRadius: BorderRadius.circular(32)),
-                  textColor: Colors.white70,
-                  child: Container(
-                      margin:
-                      EdgeInsets.symmetric(vertical: Dimens.baseMargin),
-                      child: Text(
-                        negativeButtonText,
-                        style: TextStyle(fontSize: 18.0),
-                      )),
-                  onPressed: onNegativeButtonClick),
-            ),
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            margin:
+                EdgeInsets.only(left: _minimumPadding, right: _minimumPadding),
+            child: RaisedButton(
+                color: ColorsUtil.primaryColorDark,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: ColorsUtil.primaryColor),
+                    borderRadius: BorderRadius.circular(32)),
+                textColor: Colors.white70,
+                child: Container(
+                    margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+                    child: Text(
+                      negativeButtonText,
+                      style: TextStyle(fontSize: 15.0),
+                    )),
+                onPressed: onNegativeButtonClick),
           ),
-          getPrimaryButton(primaryButtonText, onPrimaryButtonClick),
-        ],
+        ),
+        getPrimaryButton(primaryButtonText, onPrimaryButtonClick),
+      ],
     );
   }
 
@@ -666,11 +741,10 @@ class WidgetUtil {
           color: ColorsUtil.primaryColor,
           textColor: Colors.black,
           child: Container(
-              margin:
-              EdgeInsets.symmetric(vertical: Dimens.baseMargin),
+              margin: EdgeInsets.symmetric(vertical: Dimens.baseMargin),
               child: Text(
                 primaryButtonText,
-                style: TextStyle(fontSize: 18.0),
+                style: TextStyle(fontSize: 15.0),
               )),
           onPressed: onPrimaryButtonClick),
     ));
@@ -718,50 +792,32 @@ class WidgetUtil {
 //    ]);
 //  }
 //
-//  static Widget getConnectButton(ConnectMethod connectMethod) {
-//    Widget methodImage = WidgetUtil().getConnectImage(connectMethod);
-//    Widget detailsView = WidgetUtil().connectTileDetail(connectMethod);
-//
-//    return GestureDetector(
-//      child: Container(
-//        margin: EdgeInsets.only(top: Dimens.sideMargin),
-//        child: Padding(
-//          padding: EdgeInsets.all(Dimens.sideMargin),
-//          child: Row(
-//            crossAxisAlignment: CrossAxisAlignment.center,
-//            children: <Widget>[
-//              methodImage,
-//              detailsView,
-//            ],
-//          ),
-//        ),
-//        decoration: BoxDecoration(
-//          borderRadius: BorderRadius.all(const Radius.circular(20.0)),
-//          gradient: LinearGradient(
-//            begin: Alignment.topCenter,
-//            end: Alignment.bottomCenter,
-//            stops: [0.1, 0.65, 1],
-//            colors: [
-//              ColorsUtil.primaryColorDark.withOpacity(0.2),
-//              ColorsUtil.primaryColorDark.withOpacity(0.2),
-//              ColorsUtil.primaryColorDark.withOpacity(0.2),
-//            ],
-//          ),
-//        ),
-//      ),
-//      onTap: () => _launchURL(connectMethod.urlLink),
-//    );
-//  }
 
   static _launchURL(String url) async {
     if (url.isNotEmpty) {
-      if (await canLaunch(url)) {
-        await launch(url, forceWebView: true);
+      if (url.contains("facebook.com")) {
+        _launchFBURL(url);
       } else {
-        throw 'Could not launch $url';
+        _launchAnyURL(url);
       }
     } else {
       //todo Navigate to connect screen
+    }
+  }
+
+  static _launchFBURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, forceWebView: false);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  static _launchAnyURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, forceWebView: false);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -776,21 +832,39 @@ class WidgetUtil {
     );
   }
 
-  Widget getDrawer(Function privacy, Function about, Function settings) {
+  Widget getDrawer(Function privacy, Function about, Function principles,
+      Function settings, User user) {
     return Drawer(
       child: Column(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text(""),
-            accountEmail: Text(""),
-//            currentAccountPicture: new GestureDetector(
-//              child: CircleAvatar(),
-//            ),
+            accountName: Text(
+              user.name,
+              style: TextStyle(color: Colors.black),
+            ),
+            accountEmail: Text(
+              user.currentLevel,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            currentAccountPicture: new GestureDetector(
+              child: user.photoUrl != null && user.photoUrl != ""
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(user.photoUrl),
+                    )
+                  : Container(
+                      child: Icon(
+                        Icons.account_circle,
+                        color: ColorsUtil.primaryColorDark.withOpacity(.6),
+                        size: 80.0,
+                      ),
+                    ),
+            ),
             decoration: BoxDecoration(
               color: ColorsUtil.colorAccent,
-//              image: DecorationImage(
-//                  image: AssetImage("assets/images/ocj_logo_colored_bg.png"),
-//                  fit: BoxFit.contain),
+              image: DecorationImage(
+                  image: AssetImage("assets/images/wtfo_drawer.png"),
+                  fit: BoxFit.cover),
             ),
           ),
           ListTile(
@@ -808,6 +882,14 @@ class WidgetUtil {
               color: ColorsUtil.primaryColorDark,
             ),
             onTap: about,
+          ),
+          ListTile(
+            title: Text(StringsResource.principles),
+            leading: Icon(
+              Icons.description,
+              color: ColorsUtil.primaryColorDark,
+            ),
+            onTap: principles,
           ),
           ListTile(
             title: Text(StringsResource.logout),
@@ -839,20 +921,23 @@ class WidgetUtil {
       Function onChangeMade,
       Function onEditTap) {
     Activity activity = activityList.length > 0 ? activityList[index] : null;
-    return ListTile(
-        title: Text(
+    return Container(
+      child: Row(children: <Widget>[
+        Radio(
+          activeColor: ColorsUtil.colorAccentGreen,
+          value: activityValue,
+          groupValue: groupValue,
+          onChanged: onChangeMade,
+        ),
+        Text(
             activityList.length > 0
                 ? activity.name
                 : "Activity " + (index + 1).toString(),
             style: TextStyle(
               color: Colors.black,
             )),
-        leading: Radio(
-          activeColor: ColorsUtil.colorAccentGreen,
-          value: activityValue,
-          groupValue: groupValue,
-          onChanged: onChangeMade,
-        ),);
+      ],),
+    );
   }
 
   FloatingActionButton getFAB(Function onFABClick) {
@@ -894,6 +979,7 @@ class WidgetUtil {
   static getChallengeStatusBar(
     String title,
     BuildContext context, {
+    Challenge challenge,
     Color barColor,
     IconData leftIcon,
     IconData rightIcon,
@@ -908,17 +994,54 @@ class WidgetUtil {
       subTitle = "";
     }
 
+//    Widget leading;
+//    if (challenge != null) {
+//      var url = FunctionsUtil.getCurrentRankBadge(challenge.id);
+//      leading = Hero(
+//        tag: challenge,
+//        child: Container(
+//          child: Image.asset(
+//            url,
+//            height: 45.0,
+//          ),
+//        ),
+//      );
+//    } else {
+//      leading = Icon(
+//        Icons.add,
+//        color: Colors.transparent,
+//      );
+//    }
     return Container(
       color: barColor,
-      child: ListTile(
-        title: Text(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
           title,
+          textAlign: TextAlign.center,
           style: TextStyle(
               color: itemsColor.withOpacity(0.8),
-              fontSize: subTitle == "" ? 20.0 : 14.0,
+              fontSize: subTitle == "" ? 16.0 : 14.0,
               fontWeight: FontWeight.w400),
         ),
-      ),
+    );
+  }
+
+  static Widget getUserCompletedBadges(List<String> completedRanks) {
+    List<Widget> completedBadges = List();
+    completedRanks.forEach((url) {
+      var icon = Expanded(
+        child: Container(
+            child: Image.asset(
+          url,
+          height: 35.0,
+        )),
+      );
+      completedBadges.add(icon);
+    });
+
+    return ListTile(
+      title: Row(children: completedBadges),
     );
   }
 
@@ -933,133 +1056,215 @@ class WidgetUtil {
   }
 
   static Widget getUserDetailsWidget(User user) {
-    return Center(
-      child: Container(
-        child: ListView(
-          children: <Widget>[
-            Container(
-              height: 230.0,
-              child: Stack(
+    List completedBadgeUrls =
+        FunctionsUtil.getCurrentRankBadges(user.currentChallengeID);
+    var changeAgentBadge = FunctionsUtil.getCurrentRankBadges("10")[9];
+    return user.currentChallengeID != "10"
+        ? Center(
+            child: Container(
+              child: ListView(
                 children: <Widget>[
-                  Container(),
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
+                  Container(
+                    height: 230.0,
+                    child: Stack(
                       children: <Widget>[
-                        // SizedBox(height: 52.0),
-
-                        Spacer(),
-                        Text(user.name,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 32.0)),
-                        SizedBox(
-                          height: 6.0,
-                        ),
-                        Text(
-                          user.currentLevel,
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.6),
-                              fontSize: 18.0),
-                        ),
-                        SizedBox(height: 16.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Activity",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 18.0),
-                            ),
-                            Text(
-                              " : ",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 18.0),
-                            ),
-                            Text(
-                              user.currentActivity,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18.0),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Status",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 18.0),
-                            ),
-                            Text(
-                              " : ",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 18.0),
-                            ),
-                            Text(
-                              user.currentActivityStatus,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18.0),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Points",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 18.0),
-                            ),
-                            Text(
-                              " : ",
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 18.0),
-                            ),
-                            Text(
-                              user.points.toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18.0),
-                            ),
-                          ],
-                        ),
+                        Container(),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              WidgetUtil.getUserCompletedBadges(
+                                  completedBadgeUrls),
+                              Spacer(),
+                              Text(user.name,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 32.0)),
+                              SizedBox(
+                                height: 6.0,
+                              ),
+                              Text(
+                                user.currentLevel,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.6),
+                                    fontSize: 18.0),
+                              ),
+                              SizedBox(height: 16.0),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "Activity",
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontSize: 18.0),
+                                  ),
+                                  Text(
+                                    " : ",
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontSize: 18.0),
+                                  ),
+                                  Text(
+                                    user.currentActivity,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "Status",
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontSize: 18.0),
+                                  ),
+                                  Text(
+                                    " : ",
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontSize: 18.0),
+                                  ),
+                                  Text(
+                                    user.currentActivityStatus,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "Points",
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontSize: 18.0),
+                                  ),
+                                  Text(
+                                    " : ",
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontSize: 18.0),
+                                  ),
+                                  Text(
+                                    user.points.toString(),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32.0),
+                    topRight: Radius.circular(32.0)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.1, 0.65, 1],
+                  colors: [
+                    ColorsUtil.primaryColorDark.withOpacity(.6),
+                    ColorsUtil.primaryColorDark.withOpacity(.6),
+                    ColorsUtil.primaryColorDark.withOpacity(.6),
+                  ],
+                ),
+              ),
             ),
-          ],
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(32.0), topRight: Radius.circular(32.0)),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.1, 0.65, 1],
-            colors: [
-              ColorsUtil.primaryColorDark.withOpacity(.6),
-              ColorsUtil.primaryColorDark.withOpacity(.6),
-              ColorsUtil.primaryColorDark.withOpacity(.6),
-            ],
-          ),
-        ),
-      ),
-    );
+          )
+        : Center(
+            child: Container(
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    height: 320.0,
+                    child: Stack(
+                      children: <Widget>[
+                        Container(),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              WidgetUtil.getUserCompletedBadges(
+                                  completedBadgeUrls),
+                              Spacer(),
+                              Text(
+                                "Congratulations!!!",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 32.0),
+                              ),
+                              SizedBox(
+                                height: 6.0,
+                              ),
+                              Text(
+                                user.name,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 22.0),
+                              ),
+                              SizedBox(height: 16.0),
+                              Text(
+                                "You have sucessfully completed all the challenges. \nYou are a",
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 18.0),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "WFTO Change Agent!!!",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 26.0),
+                              ),
+                              Image.asset(
+                                changeAgentBadge,
+                                height: 55.0,
+                                width: 65.0,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32.0),
+                    topRight: Radius.circular(32.0)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.1, 0.65, 1],
+                  colors: [
+                    ColorsUtil.primaryColorDark.withOpacity(.6),
+                    ColorsUtil.primaryColorDark.withOpacity(.6),
+                    ColorsUtil.primaryColorDark.withOpacity(.6),
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 
   static Widget getActivityDetailsWidget(
@@ -1072,60 +1277,56 @@ class WidgetUtil {
             child: Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   // SizedBox(height: 52.0),
                   Text(activity.name,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          letterSpacing: 8.0,
-                          color: Colors.black.withOpacity(.4),
-                          fontSize: 22.0)),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
                     activity.points.toString() + " Points",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.black.withOpacity(0.8),
-                        fontSize: 18.0),
+                        fontSize: 14.0),
                   ),
                   Text(
                     activity.hourAllocation.toString() + " Hours",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.black.withOpacity(0.8),
-                        fontSize: 18.0),
+                        fontSize: 14.0),
                   ),
                   SizedBox(height: 20.0),
 
                   Text(
                     "Summary",
-                    style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 18.0),
-                  ),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
                     activity.summary,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.black.withOpacity(0.8),
-                        fontSize: 18.0),
+                        fontSize: 14.0),
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
                     "Submission type",
-                    style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 18.0),
-                  ),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
@@ -1134,29 +1335,26 @@ class WidgetUtil {
                         ? "Social media post"
                         : activity.submissionType,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.black.withOpacity(0.8),
-                        fontSize: 18.0),
+                        fontSize: 14.0),
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
                     "Instruction",
-                    style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 18.0),
-                  ),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
                     activity.activitySubmissionInstruction,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.black.withOpacity(0.8),
-                        fontSize: 18.0),
+                        fontSize: 14.0),
                   ),
                 ],
               ),
@@ -1196,66 +1394,63 @@ class WidgetUtil {
                   Text(submission.title,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          letterSpacing: 8.0,
-                          color: Colors.black.withOpacity(.4),
-                          fontSize: 22.0)),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
                     submission.points.toString() + " Points",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black.withOpacity(0.8), fontSize: 18.0),
+                        color: Colors.black.withOpacity(0.8),
+                        fontSize: 14.0),
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
                     "Descrption",
-                    style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 18.0),
-                  ),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
                     submission.activityDescription,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black.withOpacity(0.8), fontSize: 18.0),
+                        color: Colors.black.withOpacity(0.8),
+                        fontSize: 14.0),
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
                     "Duration",
-                    style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 18.0),
-                  ),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   SizedBox(
                     height: 6.0,
                   ),
                   Text(
                     FunctionsUtil.calculateTimeLapseForDisplay(submission),
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black.withOpacity(0.8), fontSize: 18.0),
+                        color: Colors.black.withOpacity(0.8),
+                        fontSize: 14.0),
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Text(
-                    "Review",
-                    style: TextStyle(
-                        letterSpacing: 8.0,
-                        color: Colors.black.withOpacity(.4),
-                        fontSize: 18.0),
-                  ),
+                    "Review Post👇🏽",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(.8),
+                          fontSize: 16.0)),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -1311,13 +1506,14 @@ class WidgetUtil {
       title: Text(
         appTitle,
         style: TextStyle(
-            color: ColorsUtil.colorAccentGreen, fontWeight: FontWeight.w700),
+            color: ColorsUtil.colorAccentGreen, fontWeight: FontWeight.w700, fontSize: 18.0),
       ),
       centerTitle: true,
       brightness: Brightness.light,
       backgroundColor: Colors.white,
     );
   }
+
   getAdminAppBar(String appTitle, {IconButton icon, IconButton trailingIcon}) {
     return AppBar(
       elevation: 0.5,
@@ -1325,7 +1521,7 @@ class WidgetUtil {
       title: Text(
         appTitle,
         style: TextStyle(
-            color: ColorsUtil.colorAccentGreen, fontWeight: FontWeight.w700),
+            color: ColorsUtil.colorAccentGreen, fontWeight: FontWeight.w700, fontSize: 18.0),
       ),
       centerTitle: true,
       brightness: Brightness.light,

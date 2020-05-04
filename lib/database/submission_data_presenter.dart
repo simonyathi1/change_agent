@@ -1,10 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:change_agent/database/i_submission_view.dart';
+import 'package:change_agent/database/notifications/wfto_notification.dart';
 import 'package:change_agent/models/activity.dart';
 import 'package:change_agent/models/challenge.dart';
 import 'package:change_agent/models/submission.dart';
 import 'package:change_agent/models/user.dart';
+import 'package:change_agent/utils/functions_util.dart';
 import 'package:change_agent/utils/strings_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'database_helper.dart';
 import 'i_admin_submission_view.dart';
@@ -33,8 +35,8 @@ class SubmissionDataPresenter {
 
   SubmissionDataPresenter.admin(this._iAdminSubmissionView);
 
-  SubmissionDataPresenter.adminAudit(this._iAdminSubmissionView,
-      this._submission);
+  SubmissionDataPresenter.adminAudit(
+      this._iAdminSubmissionView, this._submission);
 
   void _updateUserSelectedActivity() {
     if (_user.currentActivityID != _activity.id &&
@@ -67,12 +69,46 @@ class SubmissionDataPresenter {
 
     _saveSpecifiedUser(_user);
     updateUserInFireBase();
+    _sendNotificationToAdmin();
     _iSubmissionView.setUser(_user);
+  }
+
+  Future _sendNotificationToAdmin() async {
+    final response = await WFTONotification.sendToTopic(
+      title: "New Submission",
+      body:
+          "${_user.name} has submitted the submission for ${_activity.name} for review",
+      topic: "submissions",
+    );
+//
+//    if (response.statusCode != 200) {
+//      Scaffold.of(context).showSnackBar(SnackBar(
+//        content:
+//        Text('[${response.statusCode}] Error message: ${response.body}'),
+//      ));
+//    }
+  }
+
+  Future _sendNotificationToUser(String title, String message) async {
+    final response = await WFTONotification.sendToTopic(
+      title: title,
+      body: message,
+      topic: _user.id,
+    );
+//
+//    if (response.statusCode != 200) {
+//      Scaffold.of(context).showSnackBar(SnackBar(
+//        content:
+//        Text('[${response.statusCode}] Error message: ${response.body}'),
+//      ));
+//    }
   }
 
   void rejectSubmission() {
     _submission.submissionStatus = "rejected";
     saveSubmissionToFireBase();
+    _sendNotificationToUser("Submission Rejected",
+        "${_user.currentActivity} submission has been Rejected");
 
     _user.currentActivityStatus = "rejected";
     _user.challengeStatus = _setStatus("rejected");
@@ -84,6 +120,8 @@ class SubmissionDataPresenter {
   void approveSubmission() {
     _submission.submissionStatus = "approved";
     saveSubmissionToFireBase();
+    _sendNotificationToUser("Submission Approved",
+        "${_user.currentActivity} submission has been Approved");
 
     _user.currentActivityID = "none";
     _user.currentActivity = "none";
@@ -113,8 +151,7 @@ class SubmissionDataPresenter {
     var diff = end.difference(start);
     if (diff.inMinutes == 0) {
       points += _submission.timeAllocationPoints;
-    }
-    else if (diff.inMinutes / 60 < _submission.timeAllocation) {
+    } else if (diff.inMinutes / 60 < _submission.timeAllocation) {
       points += _submission.timeAllocationPoints;
     }
 
@@ -123,26 +160,14 @@ class SubmissionDataPresenter {
 
   String _setChallengeIDonSuccess(String currentID) {
     int id = int.parse(currentID);
-    if (id < 9) {
+    if (id <= 9) {
       id++;
     }
     return id.toString();
   }
 
   String _setLevel() {
-    String level = _user.currentLevel;
-    switch (_setChallengeIDonSuccess(_submission.challengeID)) {
-      case "3":
-        level = "Change Chaser";
-        break;
-      case "6":
-        level = "Change Soldier";
-        break;
-      case "9":
-        level = "Change Agent";
-        break;
-    }
-    return level;
+    return FunctionsUtil.getCurrentRank(_user.currentChallengeID);
   }
 
   String _setStatus(String status, {bool isApproving}) {
@@ -186,10 +211,7 @@ class SubmissionDataPresenter {
       if (snapShot != null && snapShot["id"] != null) {
         _user = (User.fromSnapshot(snapShot));
       }
-    } on NoSuchMethodError catch (e) {
-//      _saveUser();
-//      _iUserView.setUser(_user);
-    }
+    } on NoSuchMethodError catch (e) {}
   }
 
   void _saveSpecifiedUser(User user) async {
@@ -207,7 +229,8 @@ class SubmissionDataPresenter {
   }
 
   void saveSubmissionToFireBase() async {
-    await databaseReference.collection("submissions")
+    await databaseReference
+        .collection("submissions")
         .document(_user.id)
         .setData({
       'title': _submission.title,
@@ -243,16 +266,54 @@ class SubmissionDataPresenter {
     } catch (e) {
       print(e.toString());
     }
+
+    if (_user.currentChallengeID == "10") {
+      saveUserAsChangeAgent();
+    }
+  }
+
+  void saveUserAsChangeAgent() {
+    try {
+      databaseReference
+          .collection('changeAgents')
+          .document(_user.id)
+          .updateData({
+        'current_level': _user.currentLevel,
+        'current_activity_id': _user.currentActivityID,
+        'current_activity': "All Activities Done",
+        'points': _user.points,
+        'user_email': _user.userEmail,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void getSubmissionsFromFireBase() {
+    _submissionList.clear();
     databaseReference
         .collection('submissions')
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach(
-              (f) => _submissionList.add(Submission.fromMapObject(f.data)));
+          (f) => _submissionList.add(Submission.fromMapObject(f.data)));
       _iAdminSubmissionView.setSubmissionList(_submissionList);
     });
   }
+
+//  void getSubmissionFromFireBase(User user)  {
+//    var submission;
+//    databaseReference
+//        .collection('submissions')
+//        .document(user.id)
+//        .get()
+//        .then((DocumentSnapshot snapShot) {
+//      try {
+//        if (snapShot != null && snapShot["submitted_material"] != null) {
+//          submission = (Submission.fromSnapshot(snapShot));
+//        }
+//      } on NoSuchMethodError catch (e) {}
+//      _iSubmissionView.setSubmission(submission);
+//    });
+//  }
 }

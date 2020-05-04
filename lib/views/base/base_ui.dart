@@ -1,4 +1,6 @@
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
+import 'package:change_agent/views/drawer/principles.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:change_agent/models/user.dart';
 import 'package:change_agent/reources/strings_resource.dart';
@@ -17,9 +19,7 @@ class BaseUI extends StatefulWidget {
   BaseUI(this.signedInUser);
 
   @override
-  State<StatefulWidget> createState() {
-//    User signedInUser = User.onSignIn(
-//        _firebaseUser.displayName, _firebaseUser.email, _firebaseUser.photoUrl);
+  BaseUIState createState() {
     return BaseUIState(signedInUser);
   }
 }
@@ -29,13 +29,20 @@ class BaseUIState extends State<BaseUI> {
   GlobalKey<ScaffoldState> scaffoldKey;
 
   final User signedInUser;
-
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  var _pages;
   BaseUIState(this.signedInUser);
+
+  @override
+  void initState() {
+    super.initState();
+    _onInitState(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     scaffoldKey = new GlobalKey<ScaffoldState>();
-    final _pages = [
+     _pages = [
       UserDashBoard(signedInUser),
       ChallengesScreen(signedInUser),
     ];
@@ -45,7 +52,7 @@ class BaseUIState extends State<BaseUI> {
       backgroundColor: ColorsUtil.colorAccent,
       appBar: WidgetUtil().getAppBar(StringsResource.appTitle),
       drawer: WidgetUtil()
-          .getDrawer(_onPrivacyPolicyClick, _onAboutUsClick, _onSignOutClick),
+          .getDrawer(_onPrivacyPolicyClick, _onAboutUsClick, _onPrinciplesClick, _onSignOutClick, signedInUser),
       bottomNavigationBar: BubbleBottomBar(
         opacity: .2,
         backgroundColor: ColorsUtil.primaryColorDark.withOpacity(.6),
@@ -98,6 +105,11 @@ class BaseUIState extends State<BaseUI> {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) => AboutUs()));
   }
+  void _onPrinciplesClick() {
+    Navigator.of(context).pop();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) => PrinciplesScreen()));
+  }
 
   void _onPrivacyPolicyClick() {
     Navigator.of(context).pop();
@@ -115,5 +127,55 @@ class BaseUIState extends State<BaseUI> {
 
   void openDrawer() {
     scaffoldKey.currentState.openDrawer();
+  }
+
+  void _onInitState(BuildContext context) {
+    _subscribeToTopicAsUser();
+    var msg = "";
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        msg == (message['notification']['body'])? showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                content: ListTile(
+                  title: Text(message['notification']['title']),
+                  subtitle: Text(message['notification']['body']),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed:
+                      navigateHome
+                      ,
+                  ),
+                ],
+              ),
+        ):"";
+        msg = (message['notification']['body']);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        navigateHome();
+      },
+    );
+  }
+
+  _subscribeToTopicAsUser(){
+    _fcm.subscribeToTopic(signedInUser.id);
+  }
+
+  void navigateHome() {
+    Navigator.of(context).pop();
+    setState(() {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) =>
+              GoogleSignInScreen()));
+    });
+
   }
 }
